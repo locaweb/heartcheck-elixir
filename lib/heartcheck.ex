@@ -1,5 +1,27 @@
 defmodule HeartCheck do
   @moduledoc """
+
+  Define your own checks using this macro:
+
+  ```elixir
+
+  defmodule MyHeart do
+    use HeartCheck
+
+    add :redis do
+      # TODO: do some actual tests here
+      :ok
+    end
+
+    add :cas do
+      # TODO: do some actual tests here
+      :timer.sleep(2000)
+      {:error, "something went wrong"}
+    end
+  end
+
+  ```
+
   """
 
   defmacro __using__(opts) do
@@ -11,12 +33,11 @@ defmodule HeartCheck do
     end
   end
 
-  defmacro add(test, test_fn) do
+  defmacro add(test, do: test_fn) do
     quote do
       @tests unquote(test)
-
       def unquote(:"perform_test_#{test}")() do
-        unquote(test_fn).()
+        unquote(test_fn)
       end
     end
   end
@@ -28,18 +49,5 @@ defmodule HeartCheck do
     quote do
       def tests, do: unquote(mod_tests)
     end
-  end
-end
-
-defmodule MyHeart do
-  use HeartCheck
-
-  add :redis, fn() ->
-    {:error, "não deu certo"}
-  end
-
-  add :cas, fn() ->
-    :timer.sleep(2000)
-    :ok
   end
 end
