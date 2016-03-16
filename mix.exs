@@ -7,6 +7,11 @@ defmodule HeartCheck.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     source_url: "https://github.com/locaweb/heartcheck-elixir",
+     homepage_url: "http://developer.locaweb.com.br/",
+     docs: [
+       extras: ["README.md", "CONTRIBUTING.md"],
+     ],
      deps: deps]
   end
 
@@ -27,6 +32,10 @@ defmodule HeartCheck.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:poison, "~> 2.0"}]
+    [
+      {:poison, "~> 2.0"},
+      {:ex_doc, "~> 0.11", only: :dev},
+      {:earmark, "~> 0.1", only: :dev}
+    ]
   end
 end

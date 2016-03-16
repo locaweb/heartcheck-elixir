@@ -33,6 +33,7 @@ defmodule HeartCheck do
     end
   end
 
+  @spec add(:atom | String.t, [do: term]) :: :ok
   defmacro add(test, do: test_fn) do
     quote do
       @tests unquote(test)
@@ -40,6 +41,7 @@ defmodule HeartCheck do
         unquote(test_fn)
       end
     end
+    :ok
   end
 
   @doc false
