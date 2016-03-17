@@ -10,6 +10,7 @@ defmodule HeartCheck.Mixfile do
      source_url: "https://github.com/locaweb/heartcheck-elixir",
      homepage_url: "http://developer.locaweb.com.br/",
      docs: [
+       logo: "logo.png",
        extras: ["README.md", "CONTRIBUTING.md"],
      ],
      deps: deps]
