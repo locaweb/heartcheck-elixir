@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Adicionar o tempo de execução de cada teste
+- [ X ] Adicionar o tempo de execução de cada teste
 - [ ] Fazer o plug
 - [ ] Configuração (timeuot?)
 - [ ] Testes como módulos
