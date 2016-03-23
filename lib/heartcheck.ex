@@ -24,7 +24,7 @@ defmodule HeartCheck do
 
   """
 
-  defmacro __using__(opts) do
+  defmacro __using__(_) do
     quote do
       import HeartCheck
       @before_compile HeartCheck
@@ -38,10 +38,10 @@ defmodule HeartCheck do
     quote do
       @tests unquote(test)
       def unquote(:"perform_test_#{test}")() do
+        # :timer.tc(fn() -> unquote(test_fn) end)
         unquote(test_fn)
       end
     end
-    :ok
   end
 
   @doc false

@@ -6,7 +6,7 @@ defmodule HeartCheck.Executor do
   end
 
   def recv(tests, ref) do
-    recv(tests, Enum.map(tests, fn({name, _}) -> {name, {:error, "TIMEOUT"}} end), ref)
+    recv(tests, Enum.map(tests, fn({name, _}) -> {name, {0 ,{:error, "TIMEOUT"}}} end), ref)
   end
 
   def recv([], results, _ref) do
@@ -15,13 +15,13 @@ defmodule HeartCheck.Executor do
 
   def recv(tests, results, ref) do
     receive do
-      {_, {^ref, name, :ok}} when is_reference(ref) ->
-        log("#{inspect(ref)} #{name}: OK")
-        recv(Keyword.delete(tests, name), Keyword.put(results, name, :ok), ref)
+      {_, {^ref, name, {time, :ok}}} when is_reference(ref) ->
+        log("#{inspect(ref)} #{name}: OK - Time: #{time}")
+        recv(Keyword.delete(tests, name), Keyword.put(results, name, {time, :ok}), ref)
 
-      {_, {^ref, name, {:error, reason}}} ->
-        log("#{inspect(ref)} #{name}: ERROR: #{inspect(reason)}")
-        recv(Keyword.delete(tests, name), Keyword.put(results, name, {:error, reason}), ref)
+      {_, {^ref, name, {time, {:error, reason}}}} ->
+        log("#{inspect(ref)} #{name}: ERROR: #{inspect(reason)} Time: #{time}")
+        recv(Keyword.delete(tests, name), Keyword.put(results, name, {time, {:error, reason}}), ref)
 
       {^ref, :timeout} ->
         log("#{inspect(ref)} Execution timed out")
@@ -37,7 +37,7 @@ defmodule HeartCheck.Executor do
     task = fn(name) ->
       Task.async fn() ->
         log("(#{inspect(ref)}) Performing #{name}")
-        {ref, name, apply(heartcheck, :"perform_test_#{name}", [])}
+        {ref, name, :timer.tc(fn() -> apply(heartcheck, :"perform_test_#{name}", []) end)}
       end
     end
 
