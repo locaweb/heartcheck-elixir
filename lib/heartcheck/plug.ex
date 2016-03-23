@@ -34,7 +34,22 @@ defmodule HeartCheck.Plug do
   def init(options), do: options
 
   @spec call(Plug.Conn.t, term) :: Plug.Conn.t
-  def call(conn, _options) do
-    conn
+  def call(conn, options) do
+    at = Keyword.get(options, :at)
+    heartcheck = Keyword.get(options, :heartcheck)
+
+    if at == conn.request_path do
+      body = 
+        heartcheck
+        |> HeartCheck.Executor.execute
+        |> Enum.map(&HearCheck.Formatter.format/1)
+        |> Poison.encode!
+
+      conn
+      |> Plug.Conn.send_resp(200, body)
+      |> Plug.Conn.halt
+    else
+      conn
+    end
   end
 end
