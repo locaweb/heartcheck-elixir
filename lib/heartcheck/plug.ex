@@ -9,7 +9,7 @@ defmodule HeartCheck.Plug do
   def MyApp.Router
     use Plug.Router
     # (...)
-    plug :HeartCheck.Plug
+    plug :HeartCheck.Plug, at: "/monitoring", heartcheck: MyHeart
   end
 
   ```
@@ -23,7 +23,7 @@ defmodule HeartCheck.Plug do
 
     pipeline :api do
       # (...)
-      plug :HeartCheck.Plug
+      plug :HeartCheck.Plug, at: "/monitoring", heartcheck: MyHeart
     end
   end
 
@@ -35,23 +35,18 @@ defmodule HeartCheck.Plug do
 
   @spec call(Plug.Conn.t, term) :: Plug.Conn.t
 
-  def call(conn, options) do
-    at = Keyword.get(options, :at)
-    heartcheck = Keyword.get(options, :heartcheck)
+  def call(conn = %Plug.Conn{request_path: at}, [at: at, heartcheck: heartcheck]) do
+    body =
+      heartcheck
+      |> HeartCheck.Executor.execute
+      |> Enum.map(&HeartCheck.Formatter.format/1)
+      |> Poison.encode!
 
-    if at == conn.request_path do
-      body =
-        heartcheck
-        |> HeartCheck.Executor.execute
-        |> Enum.map(&HeartCheck.Formatter.format/1)
-        |> Poison.encode!
-
-      conn
-      |> Plug.Conn.put_resp_header("content-type", "application/json")
-      |> Plug.Conn.send_resp(200, body)
-      |> Plug.Conn.halt
-    else
-      conn
-    end
+    conn
+    |> Plug.Conn.put_resp_header("content-type", "application/json")
+    |> Plug.Conn.send_resp(200, body)
+    |> Plug.Conn.halt
   end
+
+  def call(conn, _options), do: conn
 end
