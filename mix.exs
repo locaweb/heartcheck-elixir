@@ -7,6 +7,7 @@ defmodule HeartCheck.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     elixirc_paths: elixirc_paths(Mix.env),
      source_url: "https://github.com/locaweb/heartcheck-elixir",
      homepage_url: "http://developer.locaweb.com.br/",
      docs: [
@@ -22,6 +23,9 @@ defmodule HeartCheck.Mixfile do
   def application do
     [applications: [:logger]]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_),     do: ["lib"]
 
   # Dependencies can be Hex packages:
   #
