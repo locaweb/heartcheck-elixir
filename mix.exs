@@ -40,6 +40,7 @@ defmodule HeartCheck.Mixfile do
     [
       {:poison, "~> 2.0"},
       {:plug, "~> 1.0"},
+      {:cowboy, "~> 1.0"},
       {:ex_doc, "~> 0.11", only: :dev},
       {:earmark, "~> 0.1", only: :dev}
     ]

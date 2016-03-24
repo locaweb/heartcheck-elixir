@@ -9,33 +9,41 @@ defmodule HeartCheck.Plug do
   def MyApp.Router
     use Plug.Router
     # (...)
-    plug :HeartCheck.Plug, at: "/monitoring", heartcheck: MyHeart
+    forward "/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart
   end
 
   ```
 
-  Or phoenix pipeline:
+  Or phoenix pipeline (note the different syntax):
 
   ```elixir
 
   def MyApp.Router
     use MyApp.Web, :router
 
-    pipeline :api do
+    # (...)
+
+    scope "/", MyApp do
+      pipe_through :browser
+
       # (...)
-      plug :HeartCheck.Plug, at: "/monitoring", heartcheck: MyHeart
+
+      forward "/monitoring", HeartCheck.Plug, heartcheck: MyHeart
     end
   end
 
   ```
   """
 
+  require Logger
+  import Plug.Conn
+
   @spec init(term) :: term
   def init(options), do: options
 
   @spec call(Plug.Conn.t, term) :: Plug.Conn.t
 
-  def call(conn = %Plug.Conn{request_path: at}, [at: at, heartcheck: heartcheck]) do
+  def call(conn = %Plug.Conn{path_info: []}, [heartcheck: heartcheck]) do
     body =
       heartcheck
       |> HeartCheck.Executor.execute
@@ -43,10 +51,12 @@ defmodule HeartCheck.Plug do
       |> Poison.encode!
 
     conn
-    |> Plug.Conn.put_resp_header("content-type", "application/json")
-    |> Plug.Conn.send_resp(200, body)
-    |> Plug.Conn.halt
+    |> put_resp_header("content-type", "application/json")
+    |> send_resp(200, body)
+    |> halt
   end
 
-  def call(conn, _options), do: conn
+  def call(conn, _options) do
+    conn |> send_resp(404, "not found") |> halt
+  end
 end
