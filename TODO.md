@@ -1,9 +1,11 @@
 # TODO
 
-- [ X ] Adicionar o tempo de execução de cada teste
-- [ ] Fazer o plug
+- [x] Adicionar o tempo de execução de cada teste
+- [x] Fazer o plug
+- [ ] Responder /monitoring/health_check
 - [ ] Configuração (timeuot?)
 - [ ] Testes como módulos
 - [ ] Plugins para coisas comuns
 - [ ] Documentação
 - [ ] Tests
+- [ ] Outras rotas (/dev, /info, /functional)
