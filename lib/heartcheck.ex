@@ -6,7 +6,7 @@ defmodule HeartCheck do
   ```elixir
 
   defmodule MyHeart do
-    use HeartCheck
+    use HeartCheck, timeout: 2000 # 3000 is default
 
     add :redis do
       # TODO: do some actual tests here
@@ -24,12 +24,16 @@ defmodule HeartCheck do
 
   """
 
-  defmacro __using__(_) do
+  defmacro __using__(opts) do
     quote do
       import HeartCheck
       @before_compile HeartCheck
 
       Module.register_attribute(__MODULE__, :tests, accumulate: true)
+
+      def timeout do
+        unquote(Keyword.get(opts, :timeout, 3000))
+      end
     end
   end
 

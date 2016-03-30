@@ -41,7 +41,7 @@ defmodule HeartCheck.Executor do
       end
     end
 
-    :timer.send_after(3000, self(), {ref, :timeout})
+    :timer.send_after(heartcheck.timeout, self(), {ref, :timeout})
 
     tests
     |> Enum.map(fn(t) -> {t, task.(t)} end)

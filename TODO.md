@@ -3,8 +3,8 @@
 - [x] Adicionar o tempo de execução de cada teste
 - [x] Fazer o plug
 - [x] Responder /monitoring/health_check
-- [ ] Configuração (timeuot?)
-- [ ] Testes como módulos
+- [x] Configuração (timeout?)
+- [ ] Testes(Checks) como módulos
 - [ ] Plugins para coisas comuns
 - [ ] Documentação
 - [ ] Tests
