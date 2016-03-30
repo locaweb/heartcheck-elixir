@@ -2,7 +2,7 @@
 
 - [x] Adicionar o tempo de execução de cada teste
 - [x] Fazer o plug
-- [ ] Responder /monitoring/health_check
+- [x] Responder /monitoring/health_check
 - [ ] Configuração (timeuot?)
 - [ ] Testes como módulos
 - [ ] Plugins para coisas comuns
