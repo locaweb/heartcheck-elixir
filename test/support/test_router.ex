@@ -4,7 +4,7 @@ defmodule TestRouter do
   plug :match
   plug :dispatch
 
-  forward "/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart
+  forward "/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart, functional: MyFunctionalHeart
 
   match _ do
     conn |> send_resp(404, "not found")
