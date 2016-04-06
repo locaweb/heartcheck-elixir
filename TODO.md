@@ -4,8 +4,8 @@
 - [x] Fazer o plug
 - [x] Responder /monitoring/health_check
 - [x] Configuração (timeout?)
-- [ ] Testes(Checks) como módulos
+- [x] Testes(Checks) como módulos
+- [ ] Outras rotas (/dev, /info, /functional)
 - [ ] Plugins para coisas comuns
 - [ ] Documentação
 - [ ] Tests
-- [ ] Outras rotas (/dev, /info, /functional)

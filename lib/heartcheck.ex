@@ -42,8 +42,17 @@ defmodule HeartCheck do
     quote do
       @tests unquote(test)
       def unquote(:"perform_test_#{test}")() do
-        # :timer.tc(fn() -> unquote(test_fn) end)
         unquote(test_fn)
+      end
+    end
+  end
+
+  @spec add(:atom | String.t, Module.t) :: :ok
+  defmacro add(test, mod) do
+    quote do
+      @tests unquote(test)
+      def unquote(:"perform_test_#{test}")() do
+        unquote(mod).call
       end
     end
   end

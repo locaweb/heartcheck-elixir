@@ -12,4 +12,6 @@ defmodule MyHeart do
     :timer.sleep(2000)
     {:error, "failed"}
   end
+
+  add :module, MyTestModule
 end
