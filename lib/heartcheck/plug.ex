@@ -59,7 +59,7 @@ defmodule HeartCheck.Plug do
     |> execute(conn)
   end
 
-  def call(conn, options) do
+  def call(conn, _options) do
     conn |> send_resp(404, "not found") |> halt
   end
 
