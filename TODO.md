@@ -5,7 +5,7 @@
 - [x] Responder /monitoring/health_check
 - [x] Configuração (timeout?)
 - [x] Testes(Checks) como módulos
-- [ ] Outras rotas (/dev, /info, /functional)
+- [x] Outras rotas (/dev, /info, /functional)
 - [ ] Plugins para coisas comuns
 - [ ] Documentação
 - [ ] Tests

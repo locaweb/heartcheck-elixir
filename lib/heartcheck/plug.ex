@@ -49,12 +49,14 @@ defmodule HeartCheck.Plug do
     |> send_as_json(conn)
   end
 
-  def call(conn = %Plug.Conn{path_info: []}, [heartcheck: heartcheck]) do
+  def call(conn = %Plug.Conn{path_info: ["functional"]}, [heartcheck: _, functional: heartcheck]) do
     heartcheck
-    |> HeartCheck.Executor.execute
-    |> Enum.map(&HeartCheck.Formatter.format/1)
-    |> Poison.encode!
-    |> send_as_json(conn)
+    |> execute(conn)
+   end
+
+  def call(conn = %Plug.Conn{path_info: []}, [heartcheck: heartcheck, functional: _]) do
+    heartcheck
+    |> execute(conn)
   end
 
   def call(conn, _options) do
@@ -66,5 +68,13 @@ defmodule HeartCheck.Plug do
     |> put_resp_header("content-type", "application/json")
     |> send_resp(200, body)
     |> halt
+  end
+
+  defp execute(heartcheck, conn) do
+    heartcheck
+    |> HeartCheck.Executor.execute
+    |> Enum.map(&HeartCheck.Formatter.format/1)
+    |> Poison.encode!
+    |> send_as_json(conn)
   end
 end
