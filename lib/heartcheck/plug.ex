@@ -69,7 +69,7 @@ defmodule HeartCheck.Plug do
   end
 
   defp send_as_json(body, conn) do
-    conn 
+    conn
     |> put_resp_header("content-type", "application/json")
     |> send_resp(200, body)
     |> halt
