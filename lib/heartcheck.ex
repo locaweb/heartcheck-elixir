@@ -18,11 +18,30 @@ defmodule HeartCheck do
       :timer.sleep(2000)
       {:error, "something went wrong"}
     end
+
+    # you can use modules that implement the `HeartCheck.Check` behaviour too:
+    add :module, MyTestModule
   end
 
   ```
 
+  In the example above, `MyTestModule` can be something like:
+
+  ```
+  defmodule MyTestModule do
+    @behaviour HeartCheck.Check
+
+    def call do
+      # TODO: perform some actual tests here
+      :ok
+    end
+  end
+  ```
+
   """
+
+  @typedoc "Returned format for heartcheck tests"
+  @type result :: :ok | {:error, String.t}
 
   defmacro __using__(opts) do
     quote do
@@ -37,21 +56,21 @@ defmodule HeartCheck do
     end
   end
 
-  @spec add(:atom | String.t, [do: term]) :: :ok
+  @spec add(:atom | String.t, [do: (() -> result)] | HeartCheck.Check) :: :ok
+
   defmacro add(test, do: test_fn) do
     quote do
       @tests unquote(test)
-      def unquote(:"perform_test_#{test}")() do
+      def perform_test(unquote(:"#{test}")) do
         unquote(test_fn)
       end
     end
   end
 
-  @spec add(:atom | String.t, Module.t) :: :ok
   defmacro add(test, mod) do
     quote do
       @tests unquote(test)
-      def unquote(:"perform_test_#{test}")() do
+      def perform_test(unquote(:"#{test}")) do
         unquote(mod).call
       end
     end
@@ -63,6 +82,8 @@ defmodule HeartCheck do
 
     quote do
       def tests, do: unquote(mod_tests)
+
+      def perform_test(test), do: {:error, "undefined test: #{inspect(test)}"}
     end
   end
 end

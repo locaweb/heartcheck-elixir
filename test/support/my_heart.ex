@@ -6,9 +6,12 @@ defmodule MyHeart do
     :ok
   end
 
+  add "string_test" do
+    :ok
+  end
+
   add :cas do
     # TODO: do some actual tests here
-    IO.puts "aaa"
     :timer.sleep(2000)
     {:error, "failed"}
   end

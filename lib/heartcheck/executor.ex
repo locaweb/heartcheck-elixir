@@ -37,7 +37,7 @@ defmodule HeartCheck.Executor do
     task = fn(name) ->
       Task.async fn() ->
         log("(#{inspect(ref)}) Performing #{name}")
-        {ref, name, :timer.tc(fn() -> apply(heartcheck, :"perform_test_#{name}", []) end)}
+        {ref, name, :timer.tc(fn() -> apply(heartcheck, :"perform_test", [name]) end)}
       end
     end
 
