@@ -15,8 +15,8 @@ defmodule HeartCheck.Formatter do
       message: [%{
         type: :error,
         message: reason
-      }], 
-    time: time / 1000
-    }}
+      }]},
+      time: time / 1000
+    }
   end
 end

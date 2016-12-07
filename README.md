@@ -18,3 +18,16 @@ The package can be installed as:
           [applications: [:heartcheck]]
         end
 
+## Running tests and metrics:
+
+To run the tests, simply execute:
+
+```
+$ mix test
+```
+
+To run coverage metrics and generate a html report:
+
+```
+$ mix coveralls.html
+```

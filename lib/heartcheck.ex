@@ -60,7 +60,7 @@ defmodule HeartCheck do
 
   defmacro add(test, do: test_fn) do
     quote do
-      @tests unquote(test)
+      @tests unquote(:"#{test}")
       def perform_test(unquote(:"#{test}")) do
         unquote(test_fn)
       end
@@ -69,7 +69,7 @@ defmodule HeartCheck do
 
   defmacro add(test, mod) do
     quote do
-      @tests unquote(test)
+      @tests unquote(:"#{test}")
       def perform_test(unquote(:"#{test}")) do
         unquote(mod).call
       end
