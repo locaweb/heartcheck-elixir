@@ -7,9 +7,9 @@ defmodule HeartCheck.Plug do
   ```elixir
 
   def MyApp.Router
-  use Plug.Router
-  # (...)
-  forward "/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart
+    use Plug.Router
+    # (...)
+    forward "/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart
   end
 
   ```
@@ -19,17 +19,17 @@ defmodule HeartCheck.Plug do
   ```elixir
 
   def MyApp.Router
-  use MyApp.Web, :router
+    use MyApp.Web, :router
 
-  # (...)
+    # (...)
 
-  scope "/", MyApp do
-  pipe_through :browser
+    scope "/", MyApp do
+      pipe_through :browser
 
-  # (...)
+      # (...)
 
-  forward "/monitoring", HeartCheck.Plug, heartcheck: MyHeart
-  end
+      forward "/monitoring", HeartCheck.Plug, heartcheck: MyHeart
+    end
   end
 
   ```
