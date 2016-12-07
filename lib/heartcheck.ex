@@ -40,7 +40,7 @@ defmodule HeartCheck do
 
   """
 
-  @typedoc "Returned format for heartcheck tests"
+  @typedoc "Return format for heartcheck tests"
   @type result :: :ok | {:error, String.t}
 
   defmacro __using__(opts) do
@@ -58,6 +58,17 @@ defmodule HeartCheck do
 
   @spec add(:atom | String.t, [do: (() -> result)] | HeartCheck.Check) :: :ok
 
+  @doc """
+  Adds a test to your heartcheck module.
+
+  The test is identified by `name` (will be symbolized).
+
+  The test itself may be described by a functioni in the `do` block or in an external module.
+
+  The function or external module return value must conform to the `result` type by returning either `:ok` or `{:error, String.t}`
+
+  """
+
   defmacro add(test, do: test_fn) do
     quote do
       @tests unquote(:"#{test}")
@@ -66,6 +77,7 @@ defmodule HeartCheck do
       end
     end
   end
+
 
   defmacro add(test, mod) do
     quote do

@@ -35,6 +35,8 @@ defmodule HeartCheck.Plug do
   ```
   """
 
+  @behaviour Plug
+
   require Logger
   import Plug.Conn
 
@@ -43,7 +45,7 @@ defmodule HeartCheck.Plug do
 
   @spec call(Plug.Conn.t, term) :: Plug.Conn.t
 
-  def call(conn = %Plug.Conn{path_info: ["health_check"]}, _) do
+  def call(conn = %Plug.Conn{path_info: ["health_check"]}, _params) do
     %{status: :ok}
     |> Poison.encode!
     |> send_as_json(conn)
