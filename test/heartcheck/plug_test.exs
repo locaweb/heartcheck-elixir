@@ -47,6 +47,10 @@ defmodule HeartCheck.PlugTest do
     assert {:error, :not_found} = get_and_parse(port, "/api")
   end
 
+  test "it dispatches even if functional is not set in initializing", %{port: port} do
+    {:ok, %HTTPoison.Response{status_code: 200}} = HTTPoison.get("http://localhost:#{port}/non-functional/")
+  end
+
   def get_content_type(port, path) do
     case HTTPoison.get("http://localhost:#{port}/monitoring#{path}") do
       {:ok, %HTTPoison.Response{headers: headers}} ->
