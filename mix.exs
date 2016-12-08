@@ -40,7 +40,7 @@ defmodule HeartCheck.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:poison, "~> 2.0"},
+      {:poison, "~> 2.0 or ~> 3.0"},
       {:plug, "~> 1.0"},
       {:cowboy, "~> 1.0", only: :test},
       {:httpoison, "~> 0.10", only: :test},
