@@ -7,9 +7,9 @@ defmodule HeartCheck.Plug do
   ```elixir
 
   def MyApp.Router
-  use Plug.Router
-  # (...)
-  forward "/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart
+    use Plug.Router
+    # (...)
+    forward "/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart
   end
 
   ```
@@ -19,21 +19,23 @@ defmodule HeartCheck.Plug do
   ```elixir
 
   def MyApp.Router
-  use MyApp.Web, :router
+    use MyApp.Web, :router
 
-  # (...)
+    # (...)
 
-  scope "/", MyApp do
-  pipe_through :browser
+    scope "/", MyApp do
+      pipe_through :browser
 
-  # (...)
+      # (...)
 
-  forward "/monitoring", HeartCheck.Plug, heartcheck: MyHeart
-  end
+      forward "/monitoring", HeartCheck.Plug, heartcheck: MyHeart
+    end
   end
 
   ```
   """
+
+  @behaviour Plug
 
   require Logger
   import Plug.Conn
@@ -43,7 +45,7 @@ defmodule HeartCheck.Plug do
 
   @spec call(Plug.Conn.t, term) :: Plug.Conn.t
 
-  def call(conn = %Plug.Conn{path_info: ["health_check"]}, _) do
+  def call(conn = %Plug.Conn{path_info: ["health_check"]}, _params) do
     %{status: :ok}
     |> Poison.encode!
     |> send_as_json(conn)
