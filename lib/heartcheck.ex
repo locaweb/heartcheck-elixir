@@ -9,18 +9,18 @@ defmodule HeartCheck do
     use HeartCheck, timeout: 2000 # 3000 is default
 
     add :redis do
-      # TODO: do some actual tests here
+      # TODO: do some actual checks here
       :ok
     end
 
     add :cas do
-      # TODO: do some actual tests here
+      # TODO: do some actual checks here
       :timer.sleep(2000)
       {:error, "something went wrong"}
     end
 
     # you can use modules that implement the `HeartCheck.Check` behaviour too:
-    add :module, MyTestModule
+    add :module_check, MyTestModule
   end
 
   ```
@@ -32,7 +32,7 @@ defmodule HeartCheck do
     @behaviour HeartCheck.Check
 
     def call do
-      # TODO: perform some actual tests here
+      # TODO: perform some actual checks here
       :ok
     end
   end
@@ -40,7 +40,7 @@ defmodule HeartCheck do
 
   """
 
-  @typedoc "Return format for heartcheck tests"
+  @typedoc "Return format for heartcheck checks"
   @type result :: :ok | {:error, String.t}
 
   defmacro __using__(opts) do
@@ -48,7 +48,7 @@ defmodule HeartCheck do
       import HeartCheck
       @before_compile HeartCheck
 
-      Module.register_attribute(__MODULE__, :tests, accumulate: true)
+      Module.register_attribute(__MODULE__, :checks, accumulate: true)
 
       def timeout do
         unquote(Keyword.get(opts, :timeout, 3000))
@@ -56,42 +56,52 @@ defmodule HeartCheck do
     end
   end
 
-  @spec add(:atom | String.t, [do: (() -> result)] | HeartCheck.Check) :: :ok
+  @spec add(:atom | String.t, [do: (() -> HeartCheck.result)] | HeartCheck.Check) :: :ok
 
   @doc """
-  Adds a test to your heartcheck module.
+  Adds a check to your heartcheck module.
 
-  The test is identified by `name` (will be symbolized).
+  The check is identified by `name` (will be symbolized).
 
-  The test itself may be described by a functioni in the `do` block or in an external module.
+  The check itself may be described by a functioni in the `do` block or in an external module.
 
   The function or external module return value must conform to the `result` type by returning either `:ok` or `{:error, String.t}`
 
   """
 
-  defmacro add(test, do: test_fn) do
+  defmacro add(check, do: check_fn) do
+    check_name = :"#{check}"
+
     quote do
-      @tests unquote(:"#{test}")
-      def perform_test(unquote(:"#{test}")), do: unquote(test_fn)
+      @checks unquote(check_name)
+      def perform_check(unquote(check_name)), do: unquote(check_fn)
     end
   end
 
 
-  defmacro add(test, mod) do
+  defmacro add(check, mod) do
+    check_name = :"#{check}"
+
     quote do
-      @tests unquote(:"#{test}")
-      def perform_test(unquote(:"#{test}")), do: unquote(mod).call
+      @checks unquote(check_name)
+      def perform_check(unquote(check_name)), do: unquote(mod).call
     end
   end
+
+  defmacro check_name(name) when is_binary(name), do: String.to_atom(name)
+  defmacro check_name(name) when is_atom(name), do: name
+  defmacro check_name(name), do: :"#{name}"
 
   @doc false
-  defmacro __before_compile__(env) do
-    mod_tests = Module.get_attribute(env.module, :tests)
-
+  defmacro __before_compile__(_env) do
     quote do
-      def tests, do: unquote(mod_tests)
+      @spec checks :: [atom]
+      @doc "Returns a list of the registered checks"
+      def checks, do: @checks
 
-      def perform_test(test), do: {:error, "undefined test: #{inspect(test)}"}
+      @spec perform_check(atom) :: HeartCheck.result
+      @doc "Performs the check defined by the atom"
+      def perform_check(check), do: {:error, "undefined check: #{inspect(check)}"}
     end
   end
 end
