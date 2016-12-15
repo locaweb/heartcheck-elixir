@@ -10,6 +10,10 @@ defmodule HeartCheck.PlugTest do
     TestServer.start
   end
 
+  test "it initializes the options" do
+    assert [] = HeartCheck.Plug.init([])
+  end
+
   test "it serves the content as json", %{port: port} do
     assert {"content-type", "application/json"} = get_content_type(port, "/")
     assert {"content-type", "application/json"} = get_content_type(port, "/functional")
@@ -51,11 +55,15 @@ defmodule HeartCheck.PlugTest do
     {:ok, %HTTPoison.Response{status_code: 200}} = HTTPoison.get("http://localhost:#{port}/non-functional/")
   end
 
+  test "it returns 404 when funcional module is not set on /functional", %{port: port} do
+    {:ok, %HTTPoison.Response{status_code: 404}} = HTTPoison.get("http://localhost:#{port}/non-functional/funcional/")
+  end
+
   def get_content_type(port, path) do
     case HTTPoison.get("http://localhost:#{port}/monitoring#{path}") do
       {:ok, %HTTPoison.Response{headers: headers}} ->
         Enum.find headers, fn
-          ({"content-type", value}) -> true
+          ({"content-type", _value}) -> true
           _ -> false
         end
 
