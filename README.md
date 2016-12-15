@@ -18,6 +18,58 @@ The package can be installed as:
           [applications: [:heartcheck]]
         end
 
+## Usage
+
+Define your checks in module by using the `HeartCheck` macro module and invoking the `add` macro:
+
+```elixir
+
+defmodule MyApp.HeartCheck do
+  use HeartCheck
+
+  add :some_check do
+    # TODO: perform some actual check here
+    :ok
+  end
+
+  add :another_check do
+    # TODO: perform some actual check here
+    {:error, "something went wrong"}
+  end
+end
+
+```
+
+Then you can mount `HeartCheck.Plug` using the module defined above in your app router (phoenix example below):
+
+```elixir
+
+def MyApp.Router
+  use MyApp.Web, :router
+
+  # (...)
+
+  scope "/", MyApp do
+    pipe_through :browser
+
+    # (...)
+
+    forward "/monitoring", HeartCheck.Plug, heartcheck: MyApp.HeartCheck
+  end
+end
+
+```
+
+Then your checks will be available at the `/monitoring` endpoint.
+
+You can define a another module using `HeartCheck` and use it as your functional monitoring in the router:
+
+```elixir
+    forward "/monitoring", HeartCheck.Plug, heartcheck: MyApp.HeartCheck, functional: MyApp.FunctionalHeartCheck
+```
+
+This will be available in the `/monitoring/funcional` endpoint.
+
 ## Running tests and metrics:
 
 To run the tests, simply execute:
