@@ -16,7 +16,7 @@ defmodule HeartCheck.Executor do
   def execute(heartcheck) do
     checks = heartcheck.checks
 
-    ref = make_ref
+    ref = make_ref()
 
     :timer.send_after(heartcheck.timeout, self(), {ref, :timeout})
 

@@ -16,7 +16,7 @@ defmodule HeartCheck.Mixfile do
      test_coverage: [tool: ExCoveralls],
      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test,
        "coveralls.post": :test, "coveralls.html": :test],
-     deps: deps]
+     deps: deps()]
   end
 
   # Configuration for the OTP application
@@ -45,7 +45,7 @@ defmodule HeartCheck.Mixfile do
       {:cowboy, "~> 1.0", only: :test},
       {:httpoison, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.11", only: :dev},
-      {:earmark, "~> 0.1", only: :dev},
+      {:earmark, "~> 1.0", only: :dev},
       {:credo, "~> 0.5", only: [:dev, :test]},
       {:excoveralls, "~> 0.5", only: :test},
     ]
