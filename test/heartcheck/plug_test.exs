@@ -11,7 +11,7 @@ defmodule HeartCheck.PlugTest do
   end
 
   test "it initializes the options" do
-    assert [] = HeartCheck.Plug.init([])
+    assert %{} = HeartCheck.Plug.init([])
   end
 
   test "it serves the content as json", %{port: port} do
@@ -29,15 +29,6 @@ defmodule HeartCheck.PlugTest do
 
     assert Enum.any? body, fn
       (%{"redis" => %{"status" => "ok"}}) -> true
-      (_) -> false
-    end
-  end
-
-  test "it serves the funcional test on /functional", %{port: port} do
-    {:ok, body} = get_and_parse(port, "/functional")
-
-    assert Enum.any? body, fn
-      (%{"memcached" => %{"status" => "ok"}}) -> true
       (_) -> false
     end
   end

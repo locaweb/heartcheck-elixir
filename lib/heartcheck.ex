@@ -43,9 +43,28 @@ defmodule HeartCheck do
   @typedoc "Return format for heartcheck checks"
   @type result :: :ok | {:error, String.t}
 
+  @doc "Returns the list of the names of checks performed by this HeartCheck module"
+  @callback checks() :: [atom]
+
+  @doc "Returns the timeout in milliseconds for running all the checks"
+  @callback timeout() :: non_neg_integer
+
+  @doc "Performs the check identifier by `name`"
+  @callback perform_check(name :: atom) :: result
+
+  @doc """
+  Adds HeartCheck support for your module.
+
+  You may define the timeout (in milliseconds) for the overall checks using the `timeout` option
+
+  """
+  @spec __using__(Keyword.t) :: Macro.t
   defmacro __using__(opts) do
     quote do
       import HeartCheck
+
+      @behaviour HeartCheck
+
       @before_compile HeartCheck
 
       Module.register_attribute(__MODULE__, :checks, accumulate: true)
@@ -56,19 +75,19 @@ defmodule HeartCheck do
     end
   end
 
-  @spec add(:atom | String.t, [do: (() -> HeartCheck.result)] | HeartCheck.Check) :: :ok
-
   @doc """
   Adds a check to your heartcheck module.
 
-  The check is identified by `name` (will be symbolized).
+  The check is identified by `name` (will be converted to an atom).
 
-  The check itself may be described by a functioni in the `do` block or in an external module.
+  The check itself may be described by a function in the `do` block or in an external module.
 
-  The function or external module return value must conform to the `result` type by returning either `:ok` or `{:error, String.t}`
+  The function or external module return value must conform to the `result` type by returning
+  either `:ok` or `{:error, String.t}`
 
   """
-
+  @spec add(:atom | String.t,
+    [do: (() -> HeartCheck.result)] | HeartCheck.Check) :: Macro.t
   defmacro add(check, do: check_fn) do
     check_name = :"#{check}"
 
@@ -77,7 +96,6 @@ defmodule HeartCheck do
       def perform_check(unquote(check_name)), do: unquote(check_fn)
     end
   end
-
 
   defmacro add(check, mod) do
     check_name = :"#{check}"
@@ -88,6 +106,8 @@ defmodule HeartCheck do
     end
   end
 
+  @doc "Returns the name for a check as an atom"
+  @spec check_name(String.t | atom) :: Macro.t
   defmacro check_name(name) when is_binary(name), do: String.to_atom(name)
   defmacro check_name(name) when is_atom(name), do: name
   defmacro check_name(name), do: :"#{name}"
@@ -95,12 +115,8 @@ defmodule HeartCheck do
   @doc false
   defmacro __before_compile__(_env) do
     quote do
-      @spec checks :: [atom]
-      @doc "Returns a list of the registered checks"
       def checks, do: @checks
 
-      @spec perform_check(atom) :: HeartCheck.result
-      @doc "Performs the check defined by the atom"
       def perform_check(check), do: {:error, "undefined check: #{inspect(check)}"}
     end
   end

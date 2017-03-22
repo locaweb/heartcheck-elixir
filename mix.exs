@@ -26,8 +26,8 @@ defmodule HeartCheck.Mixfile do
     [applications: [:logger]]
   end
 
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(:prod), do: ["lib"]
+  defp elixirc_paths(_), do: ["lib", "test/support"]
 
   # Dependencies can be Hex packages:
   #
@@ -42,8 +42,8 @@ defmodule HeartCheck.Mixfile do
     [
       {:poison, "~> 2.0 or ~> 3.0"},
       {:plug, "~> 1.0"},
-      {:cowboy, "~> 1.0", only: :test},
-      {:httpoison, "~> 0.10", only: :test},
+      {:cowboy, "~> 1.0", only: [:dev, :test]},
+      {:httpoison, "~> 0.10", only: [:dev, :test]},
       {:ex_doc, "~> 0.11", only: :dev},
       {:earmark, "~> 1.0", only: :dev},
       {:credo, "~> 0.5", only: [:dev, :test]},
