@@ -22,7 +22,7 @@ defmodule HeartCheck.CachingPlug do
 
   def call(conn = %Conn{path_info: ["functional"]}, options = %{functional: heartcheck}) do
     response(conn, find_server(heartcheck, options))
-   end
+  end
 
   def call(conn = %Conn{path_info: []}, options = %{heartcheck: heartcheck}) do
     response(conn, find_server(heartcheck, options))
