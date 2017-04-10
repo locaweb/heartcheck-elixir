@@ -47,6 +47,7 @@ defmodule HeartCheck.Mixfile do
       {:ex_doc, "~> 0.11", only: :dev},
       {:earmark, "~> 1.0", only: :dev},
       {:credo, "~> 0.5", only: [:dev, :test]},
+      {:dogma, "~> 0.1", only: [:dev, :test]},
       {:excoveralls, "~> 0.5", only: :test},
     ]
   end

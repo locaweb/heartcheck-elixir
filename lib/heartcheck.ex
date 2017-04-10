@@ -89,7 +89,7 @@ defmodule HeartCheck do
   @spec add(:atom | String.t,
     [do: (() -> HeartCheck.result)] | HeartCheck.Check) :: Macro.t
   defmacro add(check, do: check_fn) do
-    check_name = :"#{check}"
+    check_name = check_name(check)
 
     quote do
       @checks unquote(check_name)
@@ -98,7 +98,7 @@ defmodule HeartCheck do
   end
 
   defmacro add(check, mod) do
-    check_name = :"#{check}"
+    check_name = check_name(check)
 
     quote do
       @checks unquote(check_name)
@@ -108,9 +108,8 @@ defmodule HeartCheck do
 
   @doc "Returns the name for a check as an atom"
   @spec check_name(String.t | atom) :: Macro.t
-  defmacro check_name(name) when is_binary(name), do: String.to_atom(name)
-  defmacro check_name(name) when is_atom(name), do: name
-  defmacro check_name(name), do: :"#{name}"
+  def check_name(name) when is_binary(name), do: String.to_atom(name)
+  def check_name(name) when is_atom(name), do: name
 
   @doc false
   defmacro __before_compile__(_env) do
