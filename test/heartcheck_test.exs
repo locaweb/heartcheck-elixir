@@ -18,7 +18,7 @@ defmodule HeartCheckTest do
   test "it stringifies the original declartion" do
     assert :ok = MyHeart.perform_check(:string_test)
 
-    assert {:error, "undefined check: \"string_test\""} =
+    assert {:error, ~S(undefined check: "string_test")} =
       MyHeart.perform_check("string_test")
   end
 
