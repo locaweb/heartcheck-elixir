@@ -1,6 +1,10 @@
 defmodule HeartCheck.PlugTest do
   use ExUnit.Case
 
+  import Mock
+
+  alias HeartCheck.{Environment}
+
   @moduletag capture_log: true
 
   setup _tags do
@@ -18,6 +22,7 @@ defmodule HeartCheck.PlugTest do
     assert {"content-type", "application/json"} = get_content_type(port, "/")
     assert {"content-type", "application/json"} = get_content_type(port, "/functional")
     assert {"content-type", "application/json"} = get_content_type(port, "/health_check")
+    assert {"content-type", "application/json"} = get_content_type(port, "/environment")
   end
 
   test "it starts the server", %{port: port} do
@@ -36,6 +41,37 @@ defmodule HeartCheck.PlugTest do
   test "it serves the status: ok on /health_check", %{port: port} do
     assert {:ok, body} = get_and_parse(port, "/health_check")
     assert %{"status" => "ok"} = body
+  end
+
+  test "it gets environment info on /environment", %{port: port} do
+    with_mock Environment, [
+      info: fn() ->
+        %{
+          system_info: %{
+            version: "Ubuntu 16.06",
+            sysname: "unix linux",
+            release: "4.0.0",
+            nodename: "ADM0000",
+            machine: "x86"
+          },
+          phoenix_version: "1.0.0",
+          elixir_version: "1.4.0"
+        }
+      end
+    ] do
+      assert {:ok, body} = get_and_parse(port, "/environment")
+      assert %{
+        "system_info" => %{
+          "version" => "Ubuntu 16.06",
+          "sysname" => "unix linux",
+          "release" => "4.0.0",
+          "nodename" => "ADM0000",
+          "machine" => "x86"
+        },
+        "phoenix_version" => "1.0.0",
+        "elixir_version" => "1.4.0"
+      } == body
+    end
   end
 
   test "it returns 404 on other routes", %{port: port} do
