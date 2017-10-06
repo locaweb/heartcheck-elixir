@@ -2,7 +2,8 @@ defmodule HeartCheck.Environment do
   @moduledoc """
   Provides important information about the application's environment, including:
 
-  System info from "uname" Linux command (kernel-name, nodename, kernel-release, kernel-version and machine)
+  System info from "uname" Linux command (kernel-name, nodename, kernel-release,
+  kernel-version and machine)
 
   Elixir version
 
@@ -13,16 +14,30 @@ defmodule HeartCheck.Environment do
 
   @unknown_info_word "unknown"
 
+  @doc """
+  Returns a map with system information
+  """
+  @spec info() :: map()
+  def info do
+    %{
+      system_info: get_system_info(),
+      elixir_version: get_version(:elixir),
+      phoenix_version: (if phoenix_available?(), do: get_version(:phoenix),
+          else: "(none)")
+    }
+  end
+
   def tuple_to_string_list(tuple) do
     tuple
     |> Tuple.to_list
-    |> Enum.map(fn(entry) -> to_string(entry) end)
+    |> Enum.map(& to_string(&1))
   end
 
   def string_patterns_matcher(patterns) do
     fn(str) ->
-      patterns
-      |> Enum.any?(fn(pattern) -> str =~ pattern end)
+      Enum.any? patterns, fn(pattern) ->
+        str =~ pattern
+      end
     end
   end
 
@@ -43,7 +58,8 @@ defmodule HeartCheck.Environment do
   def build_prop_string(tuple, joiner) do
     tuple
     |> tuple_to_string_list
-    |> Enum.reduce(fn(entry_string, entries_result) -> entries_result <> joiner <> entry_string end)
+    |> Enum.reduce(fn(entry_string, entries_result) ->
+      entries_result <> joiner <> entry_string end)
   end
 
   def get_sysname do
@@ -56,21 +72,28 @@ defmodule HeartCheck.Environment do
 
   def get_windows_prop(prop_possible_names) do
     :os.getenv
-    |> Enum.map(fn(entry) -> to_string(entry) end)
-    |> Enum.find(@unknown_info_word, string_patterns_matcher(prop_possible_names))
+    |> Enum.map(& to_string(&1))
+    |> Enum.find(@unknown_info_word,
+      string_patterns_matcher(prop_possible_names))
     |> String.split("=")
     |> Enum.at(1)
   end
 
   def get_linux_prop(uname_option) do
-    uname_result = System.cmd("uname", [uname_option])
-    if elem(uname_result, 1) == 0 do
-      uname_result
-      |> elem(0)
-      |> String.trim
-    else
-      @unknown_info_word
+    case System.cmd("uname", [uname_option]) do
+      {result, 0} ->
+        String.trim(result)
+      _ ->
+        @unknown_info_word
     end
+  end
+
+  def system_specific_info_map(@unknown_info_word) do
+    %{
+      nodename: @unknown_info_word,
+      version: @unknown_info_word,
+      machine: @unknown_info_word
+    }
   end
 
   def system_specific_info_map(nodename, version, machine) do
@@ -90,20 +113,23 @@ defmodule HeartCheck.Environment do
 
   def get_system_info do
     basic_system_info = basic_system_info_map()
+
     cond do
       system_is_linux?() ->
-        basic_system_info
-        |> Map.merge(system_specific_info_map(get_linux_prop("-n"), get_linux_prop("-v"), get_linux_prop("-m")))
+        Map.merge(basic_system_info,
+          system_specific_info_map(get_linux_prop("-n"),
+            get_linux_prop("-v"), get_linux_prop("-m")))
+
       system_is_windows?() ->
-        basic_system_info
-        |> Map.merge(system_specific_info_map(
+        Map.merge(basic_system_info, system_specific_info_map(
           get_windows_prop(["COMPUTERNAME", "HOSTNAME"]),
           get_windows_prop(["OS"]),
           get_windows_prop(["PROCESSOR_ARCHITECTURE", "ARCHITECTURE"])
         ))
+
       true ->
-        basic_system_info
-        |> Map.merge(system_specific_info_map(@unknown_info_word, @unknown_info_word, @unknown_info_word))
+        Map.merge(basic_system_info,
+          system_specific_info_map(@unknown_info_word))
     end
   end
 
@@ -116,13 +142,5 @@ defmodule HeartCheck.Environment do
 
   def phoenix_available? do
     function_exported?(Phoenix, :__info__, 1)
-  end
-
-  def info do
-    %{
-      system_info: get_system_info(),
-      elixir_version: get_version(:elixir),
-      phoenix_version: (if phoenix_available?(), do: get_version(:phoenix), else: "(none)")
-    }
   end
 end

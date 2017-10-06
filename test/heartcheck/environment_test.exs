@@ -9,7 +9,8 @@ defmodule HeartCheck.EnvironmentTest do
 
   test "it converts a tuple to a string list" do
     assert Environment.tuple_to_string_list({'abc', 'def'}) == ["abc", "def"]
-    assert Environment.tuple_to_string_list({:ghi, :jkl, :mno}) == ["ghi", "jkl", "mno"]
+    assert Environment.tuple_to_string_list({:ghi, :jkl, :mno}) ==
+      ["ghi", "jkl", "mno"]
   end
 
   test "it creates a string patterns matcher" do
@@ -43,11 +44,14 @@ defmodule HeartCheck.EnvironmentTest do
   end
 
   test "it correctly builds a map with system specific values" do
-    assert Environment.system_specific_info_map("ADM0000", "Ubuntu 16.06", "x86") == %{
+    expected = %{
       nodename: "ADM0000",
       version: "Ubuntu 16.06",
       machine: "x86"
     }
+
+    assert ^expected = Environment.system_specific_info_map(
+      "ADM0000", "Ubuntu 16.06","x86")
   end
 
   test "it correctly gets Elixir and Phoenix versions" do
@@ -69,10 +73,12 @@ defmodule HeartCheck.EnvironmentTest do
 
   test "it correctly checks if Phoenix is available" do
     refute Environment.phoenix_available?()
+
     Code.eval_string """
       defmodule Phoenix do
       end
     """
+
     assert Environment.phoenix_available?()
   end
 end
