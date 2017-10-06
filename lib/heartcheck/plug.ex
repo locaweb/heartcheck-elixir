@@ -134,8 +134,8 @@ defmodule HeartCheck.Plug do
   end
 
   @doc false
-  @spec get_env_info() :: Map.t
-  def get_env_info() do
+  @spec get_env_info :: Map.t
+  def get_env_info do
     Environment.info()
   end
 end

@@ -8,19 +8,19 @@ defmodule HeartCheck.EnvironmentTest do
   @moduletag capture_log: true
 
   test "it converts a tuple to a string list" do
-    assert Environment.tupleToStringList({'abc', 'def'}) == ["abc", "def"]
-    assert Environment.tupleToStringList({:ghi, :jkl, :mno}) == ["ghi", "jkl", "mno"]
+    assert Environment.tuple_to_string_list({'abc', 'def'}) == ["abc", "def"]
+    assert Environment.tuple_to_string_list({:ghi, :jkl, :mno}) == ["ghi", "jkl", "mno"]
   end
 
   test "it creates a string patterns matcher" do
-    assert Environment.stringPatternsMatcher(["ab", "cd"]).("abba")
-    assert Environment.stringPatternsMatcher(["ab", "cd"]).("ecde")
-    refute Environment.stringPatternsMatcher(["ab", "cd"]).("acbd")
+    assert Environment.string_patterns_matcher(["ab", "cd"]).("abba")
+    assert Environment.string_patterns_matcher(["ab", "cd"]).("ecde")
+    refute Environment.string_patterns_matcher(["ab", "cd"]).("acbd")
   end
 
   test "it correctly builds prop String from separated values" do
-    assert Environment.buildPropString({:unix, :linux}, " ") == "unix linux"
-    assert Environment.buildPropString({4, 0, 0}, ".") == "4.0.0"
+    assert Environment.build_prop_string({:unix, :linux}, " ") == "unix linux"
+    assert Environment.build_prop_string({4, 0, 0}, ".") == "4.0.0"
   end
 
   test "it correctly matches system name with patterns given" do
@@ -36,14 +36,14 @@ defmodule HeartCheck.EnvironmentTest do
         end
       end
     ] do
-      assert Environment.getLinuxProp("-n") == "ADM0000"
-      assert Environment.getLinuxProp("-v") == "Ubuntu 16.06"
-      assert Environment.getLinuxProp("-m") == "x86"
+      assert Environment.get_linux_prop("-n") == "ADM0000"
+      assert Environment.get_linux_prop("-v") == "Ubuntu 16.06"
+      assert Environment.get_linux_prop("-m") == "x86"
     end
   end
 
   test "it correctly builds a map with system specific values" do
-    assert Environment.systemSpecificInfoMap("ADM0000", "Ubuntu 16.06", "x86") == %{
+    assert Environment.system_specific_info_map("ADM0000", "Ubuntu 16.06", "x86") == %{
       nodename: "ADM0000",
       version: "Ubuntu 16.06",
       machine: "x86"
@@ -62,17 +62,17 @@ defmodule HeartCheck.EnvironmentTest do
         end
       end
     ] do
-      assert Environment.getVersion(:elixir) == "1.4.0"
-      assert Environment.getVersion(:phoenix) == "1.0.0"
+      assert Environment.get_version(:elixir) == "1.4.0"
+      assert Environment.get_version(:phoenix) == "1.0.0"
     end
   end
 
   test "it correctly checks if Phoenix is available" do
-    refute Environment.phoenixAvailable?()
+    refute Environment.phoenix_available?()
     Code.eval_string """
       defmodule Phoenix do
       end
     """
-    assert Environment.phoenixAvailable?()
+    assert Environment.phoenix_available?()
   end
 end
