@@ -54,20 +54,24 @@ defmodule HeartCheck.EnvironmentTest do
       "ADM0000", "Ubuntu 16.06","x86")
   end
 
-  test "it correctly gets Elixir and Phoenix versions" do
-    :code.unstick_mod(:application)
-    with_mock :application, [
-      get_key: fn(system, :vsn) ->
-        cond do
-          system == :elixir ->
-            {:ok, '1.4.0'}
-          system == :phoenix ->
-            {:ok, '1.0.0'}
-        end
+  test "it correctly gets Elixir version" do
+    with_mock System, [
+      version: fn() ->
+        "1.4.0"
       end
     ] do
-      assert Environment.get_version(:elixir) == "1.4.0"
-      assert Environment.get_version(:phoenix) == "1.0.0"
+      assert Environment.get_elixir_version() == "1.4.0"
+    end
+  end
+
+  test "it correctly gets Phoenix version" do
+    :code.unstick_mod(:application)
+    with_mock :application, [
+      get_key: fn(:phoenix, :vsn) ->
+        {:ok, '1.0.0'}
+      end
+    ] do
+      assert Environment.get_phoenix_version() == "1.0.0"
     end
   end
 

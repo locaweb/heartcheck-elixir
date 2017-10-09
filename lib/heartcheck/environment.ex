@@ -21,8 +21,8 @@ defmodule HeartCheck.Environment do
   def info do
     %{
       system_info: get_system_info(),
-      elixir_version: get_version(:elixir),
-      phoenix_version: (if phoenix_available?(), do: get_version(:phoenix),
+      elixir_version: get_elixir_version(),
+      phoenix_version: (if phoenix_available?(), do: get_phoenix_version(),
           else: "(none)")
     }
   end
@@ -71,12 +71,8 @@ defmodule HeartCheck.Environment do
   end
 
   def get_windows_prop(prop_possible_names) do
-    :os.getenv
-    |> Enum.map(& to_string(&1))
-    |> Enum.find(@unknown_info_word,
-      string_patterns_matcher(prop_possible_names))
-    |> String.split("=")
-    |> Enum.at(1)
+    Enum.find_value(prop_possible_names,
+      @unknown_info_word, & System.get_env[&1])
   end
 
   def get_linux_prop(uname_option) do
@@ -133,8 +129,12 @@ defmodule HeartCheck.Environment do
     end
   end
 
-  def get_version(system_atom) do
-    case :application.get_key(system_atom, :vsn) do
+  def get_elixir_version do
+    System.version()
+  end
+
+  def get_phoenix_version do
+    case :application.get_key(:phoenix, :vsn) do
       {:ok, version} -> to_string(version)
       _ -> @unknown_info_word
     end
