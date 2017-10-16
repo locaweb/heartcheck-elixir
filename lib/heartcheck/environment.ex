@@ -22,28 +22,25 @@ defmodule HeartCheck.Environment do
     %{
       system_info: get_system_info(),
       elixir_version: get_elixir_version(),
-      phoenix_version: (if phoenix_available?(), do: get_phoenix_version(),
-          else: "(none)")
+      phoenix_version: get_phoenix_version()
     }
   end
 
   def tuple_to_string_list(tuple) do
     tuple
-    |> Tuple.to_list
+    |> Tuple.to_list()
     |> Enum.map(& to_string(&1))
   end
 
   def string_patterns_matcher(patterns) do
     fn(str) ->
-      Enum.any? patterns, fn(pattern) ->
-        str =~ pattern
-      end
+      Enum.any?(patterns, &(str =~ &1))
     end
   end
 
   def system_name_matches?(system_abbreviations) do
     :os.type
-    |> tuple_to_string_list
+    |> tuple_to_string_list()
     |> Enum.any?(string_patterns_matcher(system_abbreviations))
   end
 
@@ -57,9 +54,10 @@ defmodule HeartCheck.Environment do
 
   def build_prop_string(tuple, joiner) do
     tuple
-    |> tuple_to_string_list
+    |> tuple_to_string_list()
     |> Enum.reduce(fn(entry_string, entries_result) ->
-      entries_result <> joiner <> entry_string end)
+      entries_result <> joiner <> entry_string
+    end)
   end
 
   def get_sysname do
@@ -134,9 +132,13 @@ defmodule HeartCheck.Environment do
   end
 
   def get_phoenix_version do
-    case :application.get_key(:phoenix, :vsn) do
-      {:ok, version} -> to_string(version)
-      _ -> @unknown_info_word
+    if phoenix_available?() do
+      case :application.get_key(:phoenix, :vsn) do
+        {:ok, version} -> to_string(version)
+        _ -> @unknown_info_word
+      end
+    else
+      "(none)"
     end
   end
 

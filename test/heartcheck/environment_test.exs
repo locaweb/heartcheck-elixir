@@ -27,12 +27,12 @@ defmodule HeartCheck.EnvironmentTest do
   test "it correctly matches system name with patterns given" do
     with_mock System, [
       cmd: fn("uname", args) ->
-        cond do
-          Enum.at(args, 0) == "-n" ->
+        case Enum.at(args, 0) do
+          "-n" ->
             {"ADM0000", 0}
-          Enum.at(args, 0) == "-v" ->
+          "-v" ->
             {"Ubuntu 16.06", 0}
-          Enum.at(args, 0) == "-m" ->
+          "-m" ->
             {"x86", 0}
         end
       end
