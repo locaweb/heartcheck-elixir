@@ -81,7 +81,7 @@ defmodule HeartCheck.Plug do
 
   import Plug.Conn
 
-  alias HeartCheck.{Executor, Formatter}
+  alias HeartCheck.{Executor, Formatter, Environment}
 
   @spec init(term) :: term
   def init(options), do: Enum.into(options, %{})
@@ -89,6 +89,12 @@ defmodule HeartCheck.Plug do
   @spec call(Plug.Conn.t, term) :: Plug.Conn.t
   def call(conn = %Plug.Conn{path_info: ["health_check"]}, _params) do
     %{status: :ok}
+    |> Poison.encode!
+    |> send_as_json(conn)
+  end
+
+  def call(conn = %Plug.Conn{path_info: ["environment"]}, _params) do
+    get_env_info()
     |> Poison.encode!
     |> send_as_json(conn)
   end
@@ -125,5 +131,11 @@ defmodule HeartCheck.Plug do
     |> Executor.execute
     |> Enum.map(&Formatter.format/1)
     |> Poison.encode!
+  end
+
+  @doc false
+  @spec get_env_info :: Map.t
+  defp get_env_info do
+    Environment.info()
   end
 end
