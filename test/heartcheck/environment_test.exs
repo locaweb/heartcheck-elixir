@@ -60,7 +60,7 @@ defmodule HeartCheck.EnvironmentTest do
         "1.4.0"
       end
     ] do
-      assert Environment.get_elixir_version() == "1.4.0"
+      assert System.version() == "1.4.0"
     end
   end
 
@@ -71,18 +71,15 @@ defmodule HeartCheck.EnvironmentTest do
         {:ok, '1.0.0'}
       end
     ] do
+      refute Environment.phoenix_available?()
+
+      Code.eval_string """
+        defmodule Phoenix do
+        end
+      """
+
+      assert Environment.phoenix_available?()
       assert Environment.get_phoenix_version() == "1.0.0"
     end
-  end
-
-  test "it correctly checks if Phoenix is available" do
-    refute Environment.phoenix_available?()
-
-    Code.eval_string """
-      defmodule Phoenix do
-      end
-    """
-
-    assert Environment.phoenix_available?()
   end
 end

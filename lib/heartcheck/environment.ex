@@ -21,7 +21,7 @@ defmodule HeartCheck.Environment do
   def info do
     %{
       system_info: get_system_info(),
-      elixir_version: get_elixir_version(),
+      elixir_version: System.version(),
       phoenix_version: get_phoenix_version()
     }
   end
@@ -44,13 +44,9 @@ defmodule HeartCheck.Environment do
     |> Enum.any?(string_patterns_matcher(system_abbreviations))
   end
 
-  def system_is_linux? do
-    system_name_matches?(["nix", "nux"])
-  end
+  def system_is_linux?, do: system_name_matches?(["nix", "nux"])
 
-  def system_is_windows? do
-    system_name_matches?(["win"])
-  end
+  def system_is_windows?, do: system_name_matches?(["win"])
 
   def build_prop_string(tuple, joiner) do
     tuple
@@ -60,13 +56,9 @@ defmodule HeartCheck.Environment do
     end)
   end
 
-  def get_sysname do
-    build_prop_string(:os.type, " ")
-  end
+  def get_sysname, do: build_prop_string(:os.type, " ")
 
-  def get_release do
-    build_prop_string(:os.version, ".")
-  end
+  def get_release, do: build_prop_string(:os.version, ".")
 
   def get_windows_prop(prop_possible_names) do
     Enum.find_value(prop_possible_names,
@@ -127,9 +119,7 @@ defmodule HeartCheck.Environment do
     end
   end
 
-  def get_elixir_version do
-    System.version()
-  end
+  def phoenix_available?, do: function_exported?(Phoenix, :__info__, 1)
 
   def get_phoenix_version do
     if phoenix_available?() do
@@ -140,9 +130,5 @@ defmodule HeartCheck.Environment do
     else
       "(none)"
     end
-  end
-
-  def phoenix_available? do
-    function_exported?(Phoenix, :__info__, 1)
   end
 end
