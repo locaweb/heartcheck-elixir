@@ -16,6 +16,11 @@ defmodule HeartCheck.Checks.FirewallTest do
       assert Firewall.validate("http://localhost:35530") == {:error, msg}
     end
 
+    test "cannot connect to a closed port with timeout" do
+      msg = "Failed to connect to host [localhost] on port [35540]"
+      assert Firewall.validate("http://localhost:35540", timeout: 2000) == {:error, msg}
+    end
+
     test "try to use a list of urls to validate if all ports are opened" do
       port1 = 30002
       port2 = 30003

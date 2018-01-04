@@ -4,14 +4,16 @@ defmodule HeartCheck.Checks.Firewall do
   availability to external services
   """
 
-  @timeout 2000
+  @timeout 1000
+  def validate(urls, options \\ [])
 
-  @spec validate(String.t) :: :ok | {:error, list}
-  def validate(urls) when is_list(urls) do
+  @spec validate(String.t, Keyword.t) :: :ok | {:error, list}
+  def validate(urls, options) when is_list(urls) do
     errors =
-      Enum.map(urls, &execute_validate/1)
-      |> Enum.map(fn({_, error}) -> error end)
-      |> Enum.reject(&is_nil/1)
+      urls
+        |> Enum.map(&(execute_validate(&1, options)))
+        |> Enum.reject(&(&1 == :ok))
+        |> Enum.map(fn({:error, msg}) -> msg end)
 
     case length(errors) do
       0 -> :ok
@@ -19,21 +21,17 @@ defmodule HeartCheck.Checks.Firewall do
     end
   end
 
-  @spec validate(String.t) :: :ok | {:error, String.t}
-  def validate(url) when is_binary(url) do
-    case execute_validate(url) do
-      {:ok, nil} -> :ok
-      {:error, error} -> {:error, error}
-    end
-  end
+  @spec validate(String.t, Keyword.t) :: :ok | {:error, String.t}
+  def validate(url, options) when is_binary(url), do: execute_validate(url, options)
 
-  defp execute_validate(url) do
+  defp execute_validate(url, options) do
     %URI{host: host, port: port} = URI.parse(url)
+    timeout = Keyword.get(options, :timeout, @timeout)
 
-    case :gen_tcp.connect(String.to_charlist(host), port, [], @timeout) do
+    case :gen_tcp.connect(String.to_charlist(host), port, [], timeout) do
       {:ok, socket} ->
         :gen_tcp.close(socket)
-        { :ok, nil }
+        :ok
       {:error, _} ->
         {:error, "Failed to connect to host [#{host}] on port [#{port}]"}
     end
