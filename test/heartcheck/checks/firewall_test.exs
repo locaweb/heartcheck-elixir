@@ -44,6 +44,5 @@ defmodule HeartCheck.Checks.FirewallTest do
 
       assert Firewall.validate(url_list) == {:error, [msg1, msg2]}
     end
-
   end
 end

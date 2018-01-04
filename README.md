@@ -70,6 +70,26 @@ You can define a another module using `HeartCheck` and use it as your functional
 
 This will be available in the `/monitoring/funcional` endpoint.
 
+### Firewall Check
+
+Use firewall check inside your heartcheck to ensure your application is able to connect to all external services
+
+```elixir
+
+defmodule MyApp.HeartCheck do
+  use HeartCheck
+
+  alias HeartCheck.Checks.Firewall
+
+  add :firewall do
+    Firewall.validate([
+      "http://domain.com",
+      "http://otherdomain.com:9090"
+    ])
+  end
+end
+```
+
 ## Running tests and metrics:
 
 To run the tests, simply execute:
