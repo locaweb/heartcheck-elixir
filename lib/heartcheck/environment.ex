@@ -22,7 +22,9 @@ defmodule HeartCheck.Environment do
     %{
       system_info: get_system_info(),
       elixir_version: System.version(),
-      phoenix_version: get_phoenix_version()
+      phoenix_version: get_phoenix_version(),
+      otp_version: System.otp_release(),
+      deps: deps(),
     }
   end
 
@@ -130,5 +132,11 @@ defmodule HeartCheck.Environment do
     else
       "(none)"
     end
+  end
+
+  defp deps do
+    Application.loaded_applications()
+    |> Enum.map(fn({app, _, version}) -> {app, to_string(version)} end)
+    |> Enum.into(%{})
   end
 end

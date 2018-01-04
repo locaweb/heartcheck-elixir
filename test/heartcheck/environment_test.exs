@@ -7,6 +7,16 @@ defmodule HeartCheck.EnvironmentTest do
 
   @moduletag capture_log: true
 
+  test "it lists dependencies" do
+    assert :deps in Map.keys(Environment.info())
+    assert :ex_unit in Map.keys(Environment.info()[:deps])
+  end
+
+  test "it informs the Erlang/OTP version" do
+    assert :otp_version in Map.keys(Environment.info())
+    assert Environment.info()[:otp_version] != nil
+  end
+
   test "it converts a tuple to a string list" do
     assert Environment.tuple_to_string_list({'abc', 'def'}) == ["abc", "def"]
     assert Environment.tuple_to_string_list({:ghi, :jkl, :mno}) ==
