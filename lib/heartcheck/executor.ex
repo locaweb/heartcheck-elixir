@@ -9,6 +9,10 @@ defmodule HeartCheck.Executor do
 
   require Logger
 
+  @type result :: {String.t, {term, :ok} |
+                   {term, {:error, term}} |
+                   {term, :error}}
+
   @doc """
   Executes the given `HeartCheck` module.
 
@@ -31,13 +35,17 @@ defmodule HeartCheck.Executor do
   defp make_task(name, heartcheck, ref) do
     Task.async fn() ->
       log("(#{inspect(ref)}) Performing #{name}")
-      {ref, name, :timer.tc(fn() -> apply(heartcheck, :perform_check, [name]) end)}
+      {ref, name, :timer.tc(heartcheck, :perform_check, [name])}
     end
   end
 
   @spec recv([atom], reference()) :: Keyword.t
   defp recv(checks, ref) do
-    recv(checks, Enum.map(checks, fn({name, _}) -> {name, {0 ,{:error, "TIMEOUT"}}} end), ref)
+    timeout_by_default = fn {name, _} ->
+      {name, {0, {:error, "TIMEOUT"}}}
+    end
+
+    recv(checks, Enum.map(checks, timeout_by_default), ref)
   end
 
   @spec recv([atom], Keyword.t, reference()) :: Keyword.t
@@ -49,7 +57,8 @@ defmodule HeartCheck.Executor do
     receive do
       {_, {^ref, name, {time, result}}} when is_reference(ref) ->
         log_result(name, ref, result, time)
-        recv(Keyword.delete(checks, name), Keyword.put(results, name, {time, result}), ref)
+        new_result = Keyword.put(results, name, {time, result})
+        recv(Keyword.delete(checks, name), new_result, ref)
 
       {^ref, :timeout} ->
         log("#{inspect(ref)} Execution timed out")
@@ -57,7 +66,8 @@ defmodule HeartCheck.Executor do
     end
   end
 
-  @spec log_result(atom, reference, :ok | :error | {:error, String.t}, integer) :: :ok | {:error, term}
+  @spec log_result(atom, reference, :ok | :error | {:error, String.t}, integer)
+  :: :ok | {:error, term}
   defp log_result(name, ref, :ok, time) do
     log("#{inspect(ref)} #{name}: OK - Time: #{time}")
   end
