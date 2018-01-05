@@ -2,6 +2,8 @@
 
 Checks your application health
 
+[![Build Status](https://travis-ci.org/locaweb/elixir-heartcheck.svg?branch=master)](https://travis-ci.org/locaweb/elixir-heartcheck)
+
 ## Installation
 
 Add heartcheck to your list of dependencies in `mix.exs`:
