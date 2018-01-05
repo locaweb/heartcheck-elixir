@@ -1,4 +1,6 @@
 defmodule HeartCheck do
+  alias HeartCheck.Checks.Firewall
+
   @moduledoc """
 
   Define your own checks using this macro:
@@ -104,6 +106,21 @@ defmodule HeartCheck do
       @checks unquote(check_name)
       def perform_check(unquote(check_name)), do: unquote(mod).call
     end
+  end
+
+  @doc """
+  Add firewall checks to your external services
+  """
+  @spec add(Keyword.t, [do: list] :: Macro.t
+  defmacro firewall(opts \\ [], do: urls) do
+    Enum.map(urls, fn({name, url}) ->
+      check_name = (check_name(name))
+
+      quote do
+        @checks unquote(check_name)
+        def perform_check(unquote(check_name)), do: unquote(Firewall.validate(url, opts))
+      end
+    end)
   end
 
   @doc "Returns the name for a check as an atom"
