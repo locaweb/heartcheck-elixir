@@ -15,6 +15,12 @@ defmodule HeartCheck.FormatterTest do
       assert %{time: 1.0} = Formatter.format(@success)
     end
 
+    test "it handles unknown errors" do
+      error = {:test, {1000, :error}}
+      assert %{test: %{status: :error, message:
+        [%{type: :error, message: "UNKNOWN ERROR"}]}} = Formatter.format(error)
+    end
+
     test "it converts {:error, reason} to a map on error" do
       assert %{test: %{status: :error, message: [
         %{type: :error, message: "failed"}]}} = Formatter.format(@error)
