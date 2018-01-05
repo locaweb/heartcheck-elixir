@@ -109,9 +109,10 @@ defmodule HeartCheck do
   end
 
   @doc """
-  Add firewall checks to your external services
+  Add firewall checks to your external services using a list with `name` and `url`.
+
   """
-  @spec add(Keyword.t, [do: list] :: Macro.t
+  @spec firewall(Keyword.t, [do: list]) :: Macro.t
   defmacro firewall(opts \\ [], do: urls) do
     Enum.map(urls, fn({name, url}) ->
       check_name = (check_name(name))

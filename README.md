@@ -18,7 +18,7 @@ The package can be installed as:
           [applications: [:heartcheck]]
         end
 
-## Usage
+### Usage
 
 Define your checks in module by using the `HeartCheck` macro module and invoking the `add` macro:
 
@@ -49,7 +49,7 @@ def MyApp.Router
 
   # (...)
 
-  scope "/", MyApp do
+  scope "/" do
     pipe_through :browser
 
     # (...)
@@ -72,20 +72,19 @@ This will be available in the `/monitoring/funcional` endpoint.
 
 ### Firewall Check
 
-Use firewall check inside your heartcheck to ensure your application is able to connect to all external services
+Use firewall check inside your heartcheck file to ensure your application is able to connect to all external services
 
+Timeout argument is optional and default is 1000.
 ```elixir
 
 defmodule MyApp.HeartCheck do
   use HeartCheck
 
-  alias HeartCheck.Checks.Firewall
-
-  add :firewall do
-    Firewall.validate([
-      "http://domain.com",
-      "http://otherdomain.com:9090"
-    ])
+  firewall(timeout: 1000) do
+    [
+      {:my_domain, "http://domain.com"},
+      {:other_domain, "http://otherdomain.com:9090"}
+    ]
   end
 end
 ```

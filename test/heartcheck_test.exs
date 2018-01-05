@@ -32,5 +32,6 @@ defmodule HeartCheckTest do
     assert_exists.(:module)
     assert_exists.(:string_test)
     assert_exists.(:cas)
+    assert_exists.(:domain_name)
   end
 end
