@@ -4,26 +4,31 @@ Checks your application health
 
 ## Installation
 
-The package can be installed as:
-
-  1. Add heartcheck to your list of dependencies in `mix.exs`:
-
-        def deps do
-          [{:heartcheck, "~> 1.0.0"}]
-        end
-
-  2. Ensure heartcheck is started before your application:
-
-        def application do
-          [applications: [:heartcheck]]
-        end
-
-### Usage
-
-Define your checks in module by using the `HeartCheck` macro module and invoking the `add` macro:
+Add heartcheck to your list of dependencies in `mix.exs`:
 
 ```elixir
+  def deps do
+    [{:heartcheck, "~> 0.2.0"}]
+  end
+```
 
+If you are using elixir < 1.5, ensure heartcheck is started before your
+application:
+
+```elixir
+  def application do
+    [applications: [:heartcheck]]
+  end
+```
+
+## Usage
+
+### Defining your checks
+
+Define your checks in module by using the `HeartCheck` macro module and invoking
+the `HeartCheck.add/2` macro:
+
+```elixir
 defmodule MyApp.HeartCheck do
   use HeartCheck
 
@@ -40,10 +45,21 @@ end
 
 ```
 
-Then you can mount `HeartCheck.Plug` using the module defined above in your app router (phoenix example below):
+The checks can return one of the following terms:
+
+* `:ok`
+* `{:error, term}`
+* `:error`
+
+In the `{error, term}` case, a representation of `term` will be used as the
+error message.
+
+### Mounting in your web app
+
+Then you can mount `HeartCheck.Plug` using the module defined above in your app
+router (phoenix example below):
 
 ```elixir
-
 def MyApp.Router
   use MyApp.Web, :router
 
@@ -62,25 +78,31 @@ end
 
 Then your checks will be available at the `/monitoring` endpoint.
 
-You can define a another module using `HeartCheck` and use it as your functional monitoring in the router:
+You can define a another module using `HeartCheck` and use it as your functional
+monitoring in the router:
 
 ```elixir
-    forward "/monitoring", HeartCheck.Plug, heartcheck: MyApp.HeartCheck, functional: MyApp.FunctionalHeartCheck
+  forward "/monitoring", HeartCheck.Plug, heartcheck: MyApp.HeartCheck,
+    functional: MyApp.FunctionalHeartCheck
 ```
 
 This will be available in the `/monitoring/funcional` endpoint.
 
+## Other checks
+
 ### Firewall Check
 
-Use firewall check inside your heartcheck file to ensure your application is able to connect to all external services
+Use firewall check inside your heartcheck file to ensure your application is
+able to connect to an external service. This will only open a TCP connection
+to the defined host/port in the url and assert it can connect.
 
-Timeout argument is optional and default is 1000.
+Timeout argument is optional and default is `1000` (1 second).
+
 ```elixir
-
 defmodule MyApp.HeartCheck do
   use HeartCheck
 
-  firewall(timeout: 1000) do
+  firewall(timeout: 2000) do
     [
       {:my_domain, "http://domain.com"},
       {:other_domain, "http://otherdomain.com:9090"}
@@ -97,7 +119,7 @@ To run the tests, simply execute:
 $ mix test
 ```
 
-To run coverage metrics and generate a html report:
+To run coverage metrics and generate a html report in `cover/excoveralls.html`:
 
 ```
 $ mix coveralls.html
