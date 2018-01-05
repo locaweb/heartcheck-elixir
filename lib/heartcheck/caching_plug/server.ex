@@ -54,12 +54,6 @@ defmodule HeartCheck.CachingPlug.Server do
     {:reply, result, state}
   end
 
-  # TODO: make the execute handler use tasks so the GenServer does not need
-  # block while running the checks and can continue serving
-  # def handle_cast({:put, result}, state) do
-  #   {:noreply, put_in(state, :result, result)}
-  # end
-
   def handle_info(:execute, state = %{ttl: ttl, check: check}) do
     Logger.info("Caching plug for #{inspect(check)} refreshing")
 
