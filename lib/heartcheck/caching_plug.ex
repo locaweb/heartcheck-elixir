@@ -20,7 +20,8 @@ defmodule HeartCheck.CachingPlug do
 
   def init(options), do: Plug.init(options)
 
-  def call(conn = %Conn{path_info: ["functional"]}, options = %{functional: heartcheck}) do
+  def call(conn = %Conn{path_info: ["functional"]},
+  options = %{functional: heartcheck}) do
     response(conn, find_server(heartcheck, options))
   end
 

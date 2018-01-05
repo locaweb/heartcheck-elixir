@@ -3,7 +3,7 @@ defmodule HeartCheck.PlugTest do
 
   import Mock
 
-  alias HeartCheck.{Environment}
+  alias HeartCheck.Environment
 
   @moduletag capture_log: true
 
@@ -20,9 +20,14 @@ defmodule HeartCheck.PlugTest do
 
   test "it serves the content as json", %{port: port} do
     assert {"content-type", "application/json"} = get_content_type(port, "/")
-    assert {"content-type", "application/json"} = get_content_type(port, "/functional")
-    assert {"content-type", "application/json"} = get_content_type(port, "/health_check")
-    assert {"content-type", "application/json"} = get_content_type(port, "/environment")
+    assert {"content-type", "application/json"} =
+      get_content_type(port, "/functional")
+
+    assert {"content-type", "application/json"} =
+      get_content_type(port, "/health_check")
+
+    assert {"content-type", "application/json"} =
+      get_content_type(port, "/environment")
   end
 
   test "it starts the server", %{port: port} do
@@ -78,12 +83,16 @@ defmodule HeartCheck.PlugTest do
     assert {:error, :not_found} = get_and_parse(port, "/api")
   end
 
-  test "it dispatches even if functional is not set in initializing", %{port: port} do
-    {:ok, %HTTPoison.Response{status_code: 200}} = HTTPoison.get("http://localhost:#{port}/non-functional/")
+  test "it dispatches even if functional is not set in initializing",
+  %{port: port} do
+    {:ok, %HTTPoison.Response{status_code: 200}} =
+      HTTPoison.get("http://localhost:#{port}/non-functional/")
   end
 
-  test "it returns 404 when funcional module is not set on /functional", %{port: port} do
-    {:ok, %HTTPoison.Response{status_code: 404}} = HTTPoison.get("http://localhost:#{port}/non-functional/funcional/")
+  test "it returns 404 when funcional module is not set on /functional",
+  %{port: port} do
+    {:ok, %HTTPoison.Response{status_code: 404}} =
+      HTTPoison.get("http://localhost:#{port}/non-functional/funcional/")
   end
 
   def get_content_type(port, path) do

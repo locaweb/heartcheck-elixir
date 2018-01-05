@@ -4,7 +4,6 @@ defmodule MyTimedOutHeart do
   use HeartCheck, timeout: 50
 
   add :redis do
-    # TODO: do some actual tests here
     :ok
   end
 
@@ -17,7 +16,6 @@ defmodule MyTimedOutHeart do
   end
 
   add :cas do
-    # TODO: do some actual tests here
     :timer.sleep(200)
     {:error, "failed"}
   end
