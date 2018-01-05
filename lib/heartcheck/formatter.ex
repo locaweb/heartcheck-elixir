@@ -3,10 +3,12 @@ defmodule HeartCheck.Formatter do
   Formatter for more poison and heartcheck pattern friendly results
   """
 
+  alias HeartCheck.Executor
+
   @doc """
   Formats results produced by `Executor.execute/1`
   """
-  @spec format({String.t, {term, :ok} | {term, {:error, term}} | {term, :error}}) :: String.t
+  @spec format(Executor.result) :: String.t
   def format({name, {time, :ok}}) do
     %{name => %{status: :ok}, time: time / 1000}
   end
