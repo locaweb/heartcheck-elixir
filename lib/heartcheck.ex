@@ -43,7 +43,7 @@ defmodule HeartCheck do
   """
 
   @typedoc "Return format for heartcheck checks"
-  @type result :: :ok | {:error, String.t}
+  @type result :: :ok | {:error, String.t} | :error
 
   @doc "Returns the list of the names of checks performed by this HeartCheck module"
   @callback checks() :: [atom]
