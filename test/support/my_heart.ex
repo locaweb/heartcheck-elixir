@@ -19,5 +19,17 @@ defmodule MyHeart do
     {:error, "failed"}
   end
 
+  firewall do
+    [
+      {:domain_name, "http://domain_name.com"}
+    ]
+  end
+
+  firewall(timeout: 2300) do
+    [
+      {:domain_lazy, "http://lazy.com"}
+    ]
+  end
+
   add :module, MyTestModule
 end
