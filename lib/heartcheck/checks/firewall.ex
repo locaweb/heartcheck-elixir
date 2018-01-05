@@ -5,26 +5,14 @@ defmodule HeartCheck.Checks.Firewall do
   """
 
   @timeout 1000
-  def validate(urls, options \\ [])
 
-  @spec validate(String.t, Keyword.t) :: :ok | {:error, list}
-  def validate(urls, options) when is_list(urls) do
-    errors =
-      urls
-        |> Enum.map(&(execute_validate(&1, options)))
-        |> Enum.reject(&(&1 == :ok))
-        |> Enum.map(fn({:error, msg}) -> msg end)
-
-    case length(errors) do
-      0 -> :ok
-      _ -> {:error, errors}
-    end
+  @spec validate(String.t, Keyword.t) ::
+    :ok | {:error, String | list}
+  def validate(url, options \\ []) do
+    do_validate(url, options)
   end
 
-  @spec validate(String.t, Keyword.t) :: :ok | {:error, String.t}
-  def validate(url, options) when is_binary(url), do: execute_validate(url, options)
-
-  defp execute_validate(url, options) do
+  defp do_validate(url, options) do
     %URI{host: host, port: port} = URI.parse(url)
     timeout = Keyword.get(options, :timeout, @timeout)
 
