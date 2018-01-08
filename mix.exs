@@ -1,8 +1,13 @@
 defmodule HeartCheck.Mixfile do
   use Mix.Project
 
+  def version do
+    "0.3.0"
+  end
+
   def project do [app: :heartcheck,
-     version: "0.3.0",
+     version: version(),
+     description: "Web based monitoring/health checks",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
