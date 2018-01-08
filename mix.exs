@@ -7,6 +7,7 @@ defmodule HeartCheck.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      elixirc_paths: elixirc_paths(Mix.env),
+     package: package(),
      source_url: "https://github.com/locaweb/heartcheck-elixir",
      homepage_url: "https://developer.locaweb.com.br/",
      docs: [
@@ -25,6 +26,16 @@ defmodule HeartCheck.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [applications: [:logger]]
+  end
+
+  def package do
+    [
+      files: ["lib", "mix.exs", "README.md", "LICENSE.md",
+              "CONTRIBUTING.md"],
+      maintainers: ["Locaweb"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/locaweb/heartcheck-elixir",
+               "Docs" => "https://hexdocs.pm/heartcheck/#{version()}"}]
   end
 
   defp elixirc_paths(:prod), do: ["lib"]
