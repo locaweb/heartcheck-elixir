@@ -2,7 +2,7 @@
 
 Checks your application health
 
-[![Build Status](https://travis-ci.org/locaweb/elixir-heartcheck.svg?branch=master)](https://travis-ci.org/locaweb/elixir-heartcheck)
+[![Build Status](https://travis-ci.org/locaweb/heartcheck-elixir.svg?branch=master)](https://travis-ci.org/locaweb/heartcheck-elixir)
 
 ## Installation
 
