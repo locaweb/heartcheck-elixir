@@ -14,7 +14,7 @@ defmodule HeartCheck.Formatter do
   end
 
   def format({name, {time, :error}}) do
-    format({name, {time, {:error, "UNKOWN ERROR"}}})
+    format({name, {time, {:error, "UNKNOWN ERROR"}}})
   end
 
   def format({name, {time, {:error, reason}}}) do

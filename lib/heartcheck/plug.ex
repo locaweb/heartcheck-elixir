@@ -34,8 +34,8 @@ defmodule HeartCheck.Plug do
 
   ```
 
-  In any of the cases above, if you wish to cache the HeartCheck results for a time,
-  mount the `HeartCheck.CachingPlug` instead of `HeartCheck.Plug`:
+  In any of the cases above, if you wish to cache the HeartCheck results for a
+  time, mount the `HeartCheck.CachingPlug` instead of `HeartCheck.Plug`:
 
   ```elixir
 
@@ -99,7 +99,8 @@ defmodule HeartCheck.Plug do
     |> send_as_json(conn)
   end
 
-  def call(conn = %Plug.Conn{path_info: ["functional"]}, %{functional: heartcheck}) do
+  def call(conn = %Plug.Conn{path_info: ["functional"]},
+  %{functional: heartcheck}) do
     heartcheck
     |> execute
     |> send_as_json(conn)

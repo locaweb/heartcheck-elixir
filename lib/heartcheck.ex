@@ -1,6 +1,4 @@
 defmodule HeartCheck do
-  alias HeartCheck.Checks.Firewall
-
   @moduledoc """
 
   Define your own checks using this macro:
@@ -42,10 +40,14 @@ defmodule HeartCheck do
 
   """
 
-  @typedoc "Return format for heartcheck checks"
-  @type result :: :ok | {:error, String.t}
+  alias HeartCheck.Checks.Firewall
 
-  @doc "Returns the list of the names of checks performed by this HeartCheck module"
+  @typedoc "Return format for heartcheck checks"
+  @type result :: :ok | {:error, String.t} | :error
+
+  @doc """
+  Returns the list of the names of checks performed by this HeartCheck module
+  """
   @callback checks() :: [atom]
 
   @doc "Returns the timeout in milliseconds for running all the checks"
@@ -57,7 +59,8 @@ defmodule HeartCheck do
   @doc """
   Adds HeartCheck support for your module.
 
-  You may define the timeout (in milliseconds) for the overall checks using the `timeout` option
+  You may define the timeout (in milliseconds) for the overall checks using the
+  `timeout` option.
 
   """
   @spec __using__(Keyword.t) :: Macro.t
@@ -82,10 +85,11 @@ defmodule HeartCheck do
 
   The check is identified by `name` (will be converted to an atom).
 
-  The check itself may be described by a function in the `do` block or in an external module.
+  The check itself may be described by a function in the `do` block or in an
+  external module.
 
-  The function or external module return value must conform to the `result` type by returning
-  either `:ok` or `{:error, String.t}`
+  The function or external module return value must conform to the `result` type
+  by returning either `:ok`, `:error` or `{:error, String.t}`
 
   """
   @spec add(:atom | String.t,
@@ -109,8 +113,8 @@ defmodule HeartCheck do
   end
 
   @doc """
-  Add firewall checks to your external services using a list with `name` and `url`.
-
+  Add firewall checks to your external services using a list with `name` and
+  `url`.
   """
   @spec firewall(Keyword.t, [do: list]) :: Macro.t
   defmacro firewall(opts \\ [], do: urls) do
@@ -119,7 +123,9 @@ defmodule HeartCheck do
 
       quote do
         @checks unquote(check_name)
-        def perform_check(unquote(check_name)), do: unquote(Firewall.validate(url, opts))
+        def perform_check(unquote(check_name)) do
+          unquote(Firewall.validate(url, opts))
+        end
       end
     end)
   end
@@ -134,7 +140,9 @@ defmodule HeartCheck do
     quote do
       def checks, do: @checks
 
-      def perform_check(check), do: {:error, "undefined check: #{inspect(check)}"}
+      def perform_check(check) do
+        {:error, "undefined check: #{inspect(check)}"}
+      end
     end
   end
 end
