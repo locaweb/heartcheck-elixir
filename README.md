@@ -104,12 +104,10 @@ Timeout argument is optional and default is `1000` (1 second).
 defmodule MyApp.HeartCheck do
   use HeartCheck
 
-  firewall(timeout: 2000) do
-    [
-      {:my_domain, "http://domain.com"},
-      {:other_domain, "http://otherdomain.com:9090"}
-    ]
-  end
+  firewall(service: "http://service.acme.org:3200",
+    another_service: Application.get_env(:my_app, :service_url))
+
+  firewall(my_domain: Application.get_env(:my_app, :url), timeout: 2000)
 end
 ```
 

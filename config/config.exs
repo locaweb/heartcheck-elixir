@@ -1,5 +1,6 @@
 use Mix.Config
 
+config :heartcheck, :config, "http://localhost"
 
 # You can configure for your application as:
 #

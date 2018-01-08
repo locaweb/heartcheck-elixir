@@ -6,9 +6,23 @@ defmodule HeartCheck.Checks.Firewall do
 
   @timeout 1000
 
-  @spec validate(String.t, Keyword.t) ::
+  @spec validate([String.t] | String.t, Keyword.t) ::
     :ok | {:error, String | list}
-  def validate(url, options \\ []) do
+  def validate(urls, options \\ [])
+
+  def validate(urls, options) when is_list(urls) do
+    reducer = fn
+      (:ok, acc) -> acc
+      ({:error, elem}, :ok) -> {:error, [elem]}
+      ({:error, elem}, {:error, reason}) -> {:error, [elem | reason]}
+    end
+
+    urls
+    |> Enum.map(&(validate(&1, options)))
+    |> Enum.reduce(:ok, reducer)
+  end
+
+  def validate(url, options) do
     do_validate(url, options)
   end
 

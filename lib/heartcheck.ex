@@ -113,24 +113,46 @@ defmodule HeartCheck do
   end
 
   @doc """
-  Add firewall checks to your external services using a list with `name` and
-  `url`.
-  """
-  @spec firewall(Keyword.t, [do: list]) :: Macro.t
-  defmacro firewall(opts \\ [], do: urls) do
-    Enum.map(urls, fn({name, url}) ->
-      check_name = (check_name(name))
+  Add firewall checks to your external services using a keyword list.
 
+  Keys are used for the check names and the values are evaluated in runtime to
+  obtain the url to check. Options such as `timeout` can be merged with the list
+  of URLs to check.
+
+  """
+  @spec firewall(Keyword.t) :: Macro.t
+  defmacro firewall(opts) do
+    option_keys = [:timeout]
+
+    {options, urls} = Keyword.split(opts, option_keys)
+
+    Enum.map urls, fn {name, check} ->
       quote do
-        @checks unquote(check_name)
-        def perform_check(unquote(check_name)) do
-          unquote(Firewall.validate(url, opts))
+        add(unquote(name)) do
+          Firewall.validate(unquote(check), unquote(options))
         end
       end
-    end)
+    end
   end
 
-  @doc "Returns the name for a check as an atom"
+  @doc """
+  Add firewall checks to your external services using a list with `name` and
+  `url`.
+
+  Optionally accepts a keyword list of options. Currently, the only option
+  available is `timeout`.
+
+  """
+  @spec firewall(String.t | atom, String.t | term(), Keyword.t) :: Macro.t
+  defmacro firewall(name, url, opts \\ []) do
+    quote do
+      add(unquote(name)) do
+        Firewall.validate(unquote(url), unquote(opts))
+      end
+    end
+  end
+
+  @doc false
   @spec check_name(String.t | atom) :: Macro.t
   def check_name(name) when is_binary(name), do: String.to_atom(name)
   def check_name(name) when is_atom(name), do: name
