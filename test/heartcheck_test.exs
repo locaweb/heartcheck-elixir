@@ -1,5 +1,5 @@
 defmodule HeartCheckTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   test "created a list of checks" do
     assert length(MyHeart.checks) > 0
@@ -33,5 +33,21 @@ defmodule HeartCheckTest do
     assert_exists.(:string_test)
     assert_exists.(:cas)
     assert_exists.(:domain_name)
+    assert_exists.(:domain_lazy)
+    assert_exists.(:localhost)
+  end
+
+  test "macros do not hardcode configuration into compiled code" do
+    current_config = Application.get_env(:heartcheck, :config)
+    on_exit fn ->
+      Application.put_env(:heartcheck, :config, current_config)
+    end
+
+    assert :ok = MyHeart.perform_check(:config_test)
+
+    Application.put_env(:heartcheck, :config, "something else")
+
+    assert {:error, ~s(unexpected value: "something else")} =
+      MyHeart.perform_check(:config_test)
   end
 end

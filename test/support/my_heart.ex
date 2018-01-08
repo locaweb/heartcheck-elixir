@@ -19,16 +19,17 @@ defmodule MyHeart do
     {:error, "failed"}
   end
 
-  firewall do
-    [
-      {:domain_name, "http://domain_name.com"}
-    ]
-  end
+  firewall :domain_name, "http://doesnot.exist"
 
-  firewall(timeout: 2300) do
-    [
-      {:domain_lazy, "http://lazy.com"}
-    ]
+  firewall :domain_lazy, "http://doesnot.exist.acme", timeout: 10
+
+  firewall localhost: Application.get_env(:heartcheck, :config)
+
+  add :config_test do
+    case Application.get_env(:heartcheck, :config) do
+      "http://localhost" -> :ok
+      other -> {:error, "unexpected value: #{inspect(other)}"}
+    end
   end
 
   add :module, MyTestModule
