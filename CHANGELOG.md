@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [0.2.0] - 2018-01-08
+## [0.3.0] - 2018-01-08
+### Changed
+- Ensure configuration does not get hardcoded at compile time into code
+
+## [0.2.0] - 2018-01-05
 
 ### Added
 - Firewall checks
