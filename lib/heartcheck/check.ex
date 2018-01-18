@@ -6,5 +6,5 @@ defmodule HeartCheck.Check do
   @doc """
   Function that performs the test itself
   """
-  @callback call() :: HeartCheck.result
+  @callback call() :: HeartCheck.result()
 end

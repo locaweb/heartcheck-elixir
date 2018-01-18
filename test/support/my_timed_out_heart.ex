@@ -20,5 +20,5 @@ defmodule MyTimedOutHeart do
     {:error, "failed"}
   end
 
-  add :module, MyTestModule
+  add(:module, MyTestModule)
 end

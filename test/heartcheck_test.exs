@@ -2,7 +2,7 @@ defmodule HeartCheckTest do
   use ExUnit.Case, async: false
 
   test "created a list of checks" do
-    assert length(MyHeart.checks) > 0
+    assert length(MyHeart.checks()) > 0
   end
 
   test "it creates a 'catch-all' perform_check/1 for undeclared checks" do
@@ -18,14 +18,12 @@ defmodule HeartCheckTest do
   test "it stringifies the original declartion" do
     assert :ok = MyHeart.perform_check(:string_test)
 
-    assert {:error, ~S(undefined check: "string_test")} =
-      MyHeart.perform_check("string_test")
+    assert {:error, ~S(undefined check: "string_test")} = MyHeart.perform_check("string_test")
   end
 
   test "it makes MyHeart respond to the defined checks" do
-    assert_exists = fn(check) ->
-      assert {:error, "undefined check: #{inspect(check)}"} !=
-        MyHeart.perform_check(check)
+    assert_exists = fn check ->
+      assert {:error, "undefined check: #{inspect(check)}"} != MyHeart.perform_check(check)
     end
 
     assert_exists.(:redis)
@@ -39,15 +37,15 @@ defmodule HeartCheckTest do
 
   test "macros do not hardcode configuration into compiled code" do
     current_config = Application.get_env(:heartcheck, :config)
-    on_exit fn ->
+
+    on_exit(fn ->
       Application.put_env(:heartcheck, :config, current_config)
-    end
+    end)
 
     assert :ok = MyHeart.perform_check(:config_test)
 
     Application.put_env(:heartcheck, :config, "something else")
 
-    assert {:error, ~s(unexpected value: "something else")} =
-      MyHeart.perform_check(:config_test)
+    assert {:error, ~s(unexpected value: "something else")} = MyHeart.perform_check(:config_test)
   end
 end

@@ -31,6 +31,7 @@ defmodule HeartCheck do
   defmodule MyTestModule do
     @behaviour HeartCheck.Check
 
+    @impl HeartCheck.Check
     def call do
       # TODO: perform some actual checks here
       :ok
@@ -43,7 +44,7 @@ defmodule HeartCheck do
   alias HeartCheck.Checks.Firewall
 
   @typedoc "Return format for heartcheck checks"
-  @type result :: :ok | {:error, String.t} | :error
+  @type result :: :ok | {:error, String.t()} | :error
 
   @doc """
   Returns the list of the names of checks performed by this HeartCheck module
@@ -63,7 +64,7 @@ defmodule HeartCheck do
   `timeout` option.
 
   """
-  @spec __using__(Keyword.t) :: Macro.t
+  @spec __using__(Keyword.t()) :: Macro.t()
   defmacro __using__(opts) do
     quote do
       import HeartCheck
@@ -92,8 +93,7 @@ defmodule HeartCheck do
   by returning either `:ok`, `:error` or `{:error, String.t}`
 
   """
-  @spec add(:atom | String.t,
-    [do: (() -> HeartCheck.result)] | HeartCheck.Check) :: Macro.t
+  @spec add(:atom | String.t(), [do: (() -> HeartCheck.result())] | HeartCheck.Check) :: Macro.t()
   defmacro add(check, do: check_fn) do
     check_name = check_name(check)
 
@@ -120,19 +120,19 @@ defmodule HeartCheck do
   of URLs to check.
 
   """
-  @spec firewall(Keyword.t) :: Macro.t
+  @spec firewall(Keyword.t()) :: Macro.t()
   defmacro firewall(opts) do
     option_keys = [:timeout]
 
     {options, urls} = Keyword.split(opts, option_keys)
 
-    Enum.map urls, fn {name, check} ->
+    Enum.map(urls, fn {name, check} ->
       quote do
-        add(unquote(name)) do
+        add unquote(name) do
           Firewall.validate(unquote(check), unquote(options))
         end
       end
-    end
+    end)
   end
 
   @doc """
@@ -143,17 +143,17 @@ defmodule HeartCheck do
   available is `timeout`.
 
   """
-  @spec firewall(String.t | atom, String.t | term(), Keyword.t) :: Macro.t
+  @spec firewall(String.t() | atom, String.t() | term(), Keyword.t()) :: Macro.t()
   defmacro firewall(name, url, opts \\ []) do
     quote do
-      add(unquote(name)) do
+      add unquote(name) do
         Firewall.validate(unquote(url), unquote(opts))
       end
     end
   end
 
   @doc false
-  @spec check_name(String.t | atom) :: Macro.t
+  @spec check_name(String.t() | atom) :: Macro.t()
   def check_name(name) when is_binary(name), do: String.to_atom(name)
   def check_name(name) when is_atom(name), do: name
 

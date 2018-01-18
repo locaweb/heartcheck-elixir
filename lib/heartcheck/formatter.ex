@@ -8,7 +8,7 @@ defmodule HeartCheck.Formatter do
   @doc """
   Formats results produced by `Executor.execute/1`
   """
-  @spec format(Executor.result) :: String.t
+  @spec format(Executor.result()) :: String.t()
   def format({name, {time, :ok}}) do
     %{name => %{status: :ok}, time: time / 1000}
   end
@@ -18,12 +18,16 @@ defmodule HeartCheck.Formatter do
   end
 
   def format({name, {time, {:error, reason}}}) do
-    %{name => %{
-      status: :error,
-      message: [%{
-        type: :error,
-        message: reason
-      }]},
+    %{
+      name => %{
+        status: :error,
+        message: [
+          %{
+            type: :error,
+            message: reason
+          }
+        ]
+      },
       time: time / 1000
     }
   end

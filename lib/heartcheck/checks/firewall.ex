@@ -6,19 +6,18 @@ defmodule HeartCheck.Checks.Firewall do
 
   @timeout 1000
 
-  @spec validate([String.t] | String.t, Keyword.t) ::
-    :ok | {:error, String | list}
+  @spec validate([String.t()] | String.t(), Keyword.t()) :: :ok | {:error, String | list}
   def validate(urls, options \\ [])
 
   def validate(urls, options) when is_list(urls) do
     reducer = fn
-      (:ok, acc) -> acc
-      ({:error, elem}, :ok) -> {:error, [elem]}
-      ({:error, elem}, {:error, reason}) -> {:error, [elem | reason]}
+      :ok, acc -> acc
+      {:error, elem}, :ok -> {:error, [elem]}
+      {:error, elem}, {:error, reason} -> {:error, [elem | reason]}
     end
 
     urls
-    |> Enum.map(&(validate(&1, options)))
+    |> Enum.map(&validate(&1, options))
     |> Enum.reduce(:ok, reducer)
   end
 
@@ -34,6 +33,7 @@ defmodule HeartCheck.Checks.Firewall do
       {:ok, socket} ->
         :gen_tcp.close(socket)
         :ok
+
       {:error, _} ->
         {:error, "Failed to connect to host [#{host}] on port [#{port}]"}
     end

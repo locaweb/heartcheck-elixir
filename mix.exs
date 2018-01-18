@@ -60,7 +60,7 @@ defmodule HeartCheck.Mixfile do
       {:poison, "~> 2.0 or ~> 3.0"},
       {:plug, "~> 1.0"},
       {:cowboy, "~> 1.0", only: [:dev, :test]},
-      {:httpoison, "~> 0.10", only: [:dev, :test]},
+      {:httpoison, "~> 0.10 or ~> 1.0", only: [:dev, :test]},
       {:ex_doc, "~> 0.11", only: :dev, runtime: false},
       {:earmark, "~> 1.0", only: :dev},
       {:credo, "~> 0.5", only: [:dev, :test]},

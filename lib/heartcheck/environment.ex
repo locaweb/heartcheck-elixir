@@ -24,24 +24,24 @@ defmodule HeartCheck.Environment do
       elixir_version: System.version(),
       phoenix_version: get_phoenix_version(),
       otp_version: System.otp_release(),
-      deps: deps(),
+      deps: deps()
     }
   end
 
   def tuple_to_string_list(tuple) do
     tuple
     |> Tuple.to_list()
-    |> Enum.map(& to_string(&1))
+    |> Enum.map(&to_string(&1))
   end
 
   def string_patterns_matcher(patterns) do
-    fn(str) ->
+    fn str ->
       Enum.any?(patterns, &(str =~ &1))
     end
   end
 
   def system_name_matches?(system_abbreviations) do
-    :os.type
+    :os.type()
     |> tuple_to_string_list()
     |> Enum.any?(string_patterns_matcher(system_abbreviations))
   end
@@ -53,24 +53,24 @@ defmodule HeartCheck.Environment do
   def build_prop_string(tuple, joiner) do
     tuple
     |> tuple_to_string_list()
-    |> Enum.reduce(fn(entry_string, entries_result) ->
+    |> Enum.reduce(fn entry_string, entries_result ->
       entries_result <> joiner <> entry_string
     end)
   end
 
-  def get_sysname, do: build_prop_string(:os.type, " ")
+  def get_sysname, do: build_prop_string(:os.type(), " ")
 
-  def get_release, do: build_prop_string(:os.version, ".")
+  def get_release, do: build_prop_string(:os.version(), ".")
 
   def get_windows_prop(prop_possible_names) do
-    Enum.find_value(prop_possible_names,
-      @unknown_info_word, & System.get_env[&1])
+    Enum.find_value(prop_possible_names, @unknown_info_word, &System.get_env()[&1])
   end
 
   def get_linux_prop(uname_option) do
     case System.cmd("uname", [uname_option]) do
       {result, 0} ->
         String.trim(result)
+
       _ ->
         @unknown_info_word
     end
@@ -104,20 +104,27 @@ defmodule HeartCheck.Environment do
 
     cond do
       system_is_linux?() ->
-        Map.merge(basic_system_info,
-          system_specific_info_map(get_linux_prop("-n"),
-            get_linux_prop("-v"), get_linux_prop("-m")))
+        Map.merge(
+          basic_system_info,
+          system_specific_info_map(
+            get_linux_prop("-n"),
+            get_linux_prop("-v"),
+            get_linux_prop("-m")
+          )
+        )
 
       system_is_windows?() ->
-        Map.merge(basic_system_info, system_specific_info_map(
-          get_windows_prop(["COMPUTERNAME", "HOSTNAME"]),
-          get_windows_prop(["OS"]),
-          get_windows_prop(["PROCESSOR_ARCHITECTURE", "ARCHITECTURE"])
-        ))
+        Map.merge(
+          basic_system_info,
+          system_specific_info_map(
+            get_windows_prop(["COMPUTERNAME", "HOSTNAME"]),
+            get_windows_prop(["OS"]),
+            get_windows_prop(["PROCESSOR_ARCHITECTURE", "ARCHITECTURE"])
+          )
+        )
 
       true ->
-        Map.merge(basic_system_info,
-          system_specific_info_map(@unknown_info_word))
+        Map.merge(basic_system_info, system_specific_info_map(@unknown_info_word))
     end
   end
 
@@ -136,7 +143,7 @@ defmodule HeartCheck.Environment do
 
   defp deps do
     Application.loaded_applications()
-    |> Enum.map(fn({app, _, version}) -> {app, to_string(version)} end)
+    |> Enum.map(fn {app, _, version} -> {app, to_string(version)} end)
     |> Enum.into(%{})
   end
 end
