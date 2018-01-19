@@ -3,6 +3,7 @@ defmodule MyTestModule do
 
   @behaviour HeartCheck.Check
 
+  @impl HeartCheck.Check
   def call do
     :ok
   end

@@ -16,9 +16,10 @@ defmodule HeartCheck.ExecutorTest do
   end
 
   test "it logs execution" do
-    log = capture_log fn ->
-      Executor.execute(MyHeart)
-    end
+    log =
+      capture_log(fn ->
+        Executor.execute(MyHeart)
+      end)
 
     assert log =~ "[HeartCheck]"
     assert log =~ "Performing cas"

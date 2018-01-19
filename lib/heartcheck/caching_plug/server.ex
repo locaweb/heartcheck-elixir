@@ -16,7 +16,7 @@ defmodule HeartCheck.CachingPlug.Server do
   given `ttl` (in milliseconds). It registers itself using the provided `name`.
   If name is not given, a name based on the `heartcheck` will be used.
   """
-  @spec start_link(atom, non_neg_integer, GenServer.name) :: GenServer.on_start
+  @spec start_link(atom, non_neg_integer, GenServer.name()) :: GenServer.on_start()
   def start_link(heartcheck, ttl, name \\ nil) do
     server_name =
       case name do
@@ -28,13 +28,13 @@ defmodule HeartCheck.CachingPlug.Server do
   end
 
   @doc "Fetches the execution result from the cache"
-  @spec fetch(GenServer.server) :: term
+  @spec fetch(GenServer.server()) :: term
   def fetch(name) do
     GenServer.call(name, :fetch)
   end
 
   @doc "Returns the last time the server has run or `nil` if that didn't happen"
-  @spec last_run(GenServer.server) :: DateTime.t | nil
+  @spec last_run(GenServer.server()) :: DateTime.t() | nil
   def last_run(name) do
     GenServer.call(name, :last_run)
   end

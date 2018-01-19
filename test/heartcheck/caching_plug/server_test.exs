@@ -6,8 +6,12 @@ defmodule HeartCheck.CachingPlug.ServerTest do
   @moduletag capture_log: true
 
   setup tags do
-    {:ok, pid} = Server.start_link(MyHeart, tags[:ttl] || 300,
-      Module.concat(__MODULE__, "Line#{tags[:line]}"))
+    {:ok, pid} =
+      Server.start_link(
+        MyHeart,
+        tags[:ttl] || 300,
+        Module.concat(__MODULE__, "Line#{tags[:line]}")
+      )
 
     {:ok, pid: pid}
   end

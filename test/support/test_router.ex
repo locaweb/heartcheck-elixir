@@ -5,14 +5,17 @@ defmodule TestRouter do
 
   require HeartCheck
 
-  plug :match
-  plug :dispatch
+  plug(:match)
+  plug(:dispatch)
 
-  forward "/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart,
+  forward("/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart, functional: MyFunctionalHeart)
+
+  forward("/non-functional", to: HeartCheck.Plug, heartcheck: MyHeart)
+
+  forward(
+    "/caching",
+    to: HeartCheck.CachingPlug,
+    heartcheck: MyHeart,
     functional: MyFunctionalHeart
-
-  forward "/non-functional", to: HeartCheck.Plug, heartcheck: MyHeart
-
-  forward "/caching", to: HeartCheck.CachingPlug, heartcheck: MyHeart,
-    functional: MyFunctionalHeart
+  )
 end

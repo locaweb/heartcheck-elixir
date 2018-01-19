@@ -83,28 +83,29 @@ defmodule HeartCheck.Plug do
 
   alias HeartCheck.{Executor, Formatter, Environment}
 
+  @impl Plug
   @spec init(term) :: term
   def init(options), do: Enum.into(options, %{})
 
-  @spec call(Plug.Conn.t, term) :: Plug.Conn.t
+  @impl Plug
+  @spec call(Plug.Conn.t(), term) :: Plug.Conn.t()
   def call(conn = %Plug.Conn{path_info: ["health_check"]}, _params) do
     %{status: :ok}
-    |> Poison.encode!
+    |> Poison.encode!()
     |> send_as_json(conn)
   end
 
   def call(conn = %Plug.Conn{path_info: ["environment"]}, _params) do
     get_env_info()
-    |> Poison.encode!
+    |> Poison.encode!()
     |> send_as_json(conn)
   end
 
-  def call(conn = %Plug.Conn{path_info: ["functional"]},
-  %{functional: heartcheck}) do
+  def call(conn = %Plug.Conn{path_info: ["functional"]}, %{functional: heartcheck}) do
     heartcheck
     |> execute
     |> send_as_json(conn)
-   end
+  end
 
   def call(conn = %Plug.Conn{path_info: []}, %{heartcheck: heartcheck}) do
     heartcheck
@@ -117,7 +118,7 @@ defmodule HeartCheck.Plug do
   end
 
   @doc false
-  @spec send_as_json(String.t, Plug.Conn.t) :: Plug.Conn.t
+  @spec send_as_json(String.t(), Plug.Conn.t()) :: Plug.Conn.t()
   def send_as_json(body, conn) do
     conn
     |> put_resp_header("content-type", "application/json")
@@ -126,16 +127,16 @@ defmodule HeartCheck.Plug do
   end
 
   @doc false
-  @spec execute(atom) :: String.t
+  @spec execute(atom) :: String.t()
   def execute(heartcheck) do
     heartcheck
-    |> Executor.execute
+    |> Executor.execute()
     |> Enum.map(&Formatter.format/1)
-    |> Poison.encode!
+    |> Poison.encode!()
   end
 
   @doc false
-  @spec get_env_info :: Map.t
+  @spec get_env_info :: Map.t()
   defp get_env_info do
     Environment.info()
   end

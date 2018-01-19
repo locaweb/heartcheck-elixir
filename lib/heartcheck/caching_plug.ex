@@ -14,14 +14,13 @@ defmodule HeartCheck.CachingPlug do
   alias HeartCheck.Plug
   alias HeartCheck.CachingPlug.Server
 
-  @type find_server :: {:ok, GenServer.server} | {:error, term} | :error
+  @type find_server :: {:ok, GenServer.server()} | {:error, term} | :error
 
   @default_ttl 300_000
 
   def init(options), do: Plug.init(options)
 
-  def call(conn = %Conn{path_info: ["functional"]},
-  options = %{functional: heartcheck}) do
+  def call(conn = %Conn{path_info: ["functional"]}, options = %{functional: heartcheck}) do
     response(conn, find_server(heartcheck, options))
   end
 
@@ -44,7 +43,7 @@ defmodule HeartCheck.CachingPlug do
     end
   end
 
-  @spec response(Conn.t, find_server) :: Conn.t
+  @spec response(Conn.t(), find_server) :: Conn.t()
   defp response(conn, {:error, reason}) do
     Logger.error("Failed to start a caching server: #{inspect(reason)}")
     Conn.resp(conn, 500, "Internal server error")

@@ -19,11 +19,11 @@ defmodule MyHeart do
     {:error, "failed"}
   end
 
-  firewall :domain_name, "http://doesnot.exist"
+  firewall(:domain_name, "http://doesnot.exist")
 
-  firewall :domain_lazy, "http://doesnot.exist.acme", timeout: 10
+  firewall(:domain_lazy, "http://doesnot.exist.acme", timeout: 10)
 
-  firewall localhost: Application.get_env(:heartcheck, :config)
+  firewall(localhost: Application.get_env(:heartcheck, :config))
 
   add :config_test do
     case Application.get_env(:heartcheck, :config) do
@@ -32,5 +32,5 @@ defmodule MyHeart do
     end
   end
 
-  add :module, MyTestModule
+  add(:module, MyTestModule)
 end

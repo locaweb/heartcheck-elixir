@@ -9,16 +9,18 @@ defmodule HeartCheck.Executor do
 
   require Logger
 
-  @type result :: {String.t, {term, :ok} |
-                   {term, {:error, term}} |
-                   {term, :error}}
+  @type result ::
+          {String.t(),
+           {term, :ok}
+           | {term, {:error, term}}
+           | {term, :error}}
 
   @doc """
   Executes the given `HeartCheck` module.
 
   Returns a `Keyword.t` with the results keyed by check name.
   """
-  @spec execute(HeartCheck) :: Keyword.t
+  @spec execute(HeartCheck) :: Keyword.t()
   def execute(heartcheck) do
     checks = heartcheck.checks
 
@@ -27,19 +29,19 @@ defmodule HeartCheck.Executor do
     :timer.send_after(heartcheck.timeout, self(), {ref, :timeout})
 
     checks
-    |> Enum.map(fn(t) -> {t, make_task(t, heartcheck, ref)} end)
+    |> Enum.map(fn t -> {t, make_task(t, heartcheck, ref)} end)
     |> recv(ref)
   end
 
-  @spec make_task(atom, HeartCheck, reference) :: Task.t
+  @spec make_task(atom, HeartCheck, reference) :: Task.t()
   defp make_task(name, heartcheck, ref) do
-    Task.async fn() ->
+    Task.async(fn ->
       log("(#{inspect(ref)}) Performing #{name}")
       {ref, name, :timer.tc(heartcheck, :perform_check, [name])}
-    end
+    end)
   end
 
-  @spec recv([atom], reference()) :: Keyword.t
+  @spec recv([atom], reference()) :: Keyword.t()
   defp recv(checks, ref) do
     timeout_by_default = fn {name, _} ->
       {name, {0, {:error, "TIMEOUT"}}}
@@ -48,7 +50,7 @@ defmodule HeartCheck.Executor do
     recv(checks, Enum.map(checks, timeout_by_default), ref)
   end
 
-  @spec recv([atom], Keyword.t, reference()) :: Keyword.t
+  @spec recv([atom], Keyword.t(), reference()) :: Keyword.t()
   defp recv([], results, _ref) do
     results
   end
@@ -66,8 +68,8 @@ defmodule HeartCheck.Executor do
     end
   end
 
-  @spec log_result(atom, reference, :ok | :error | {:error, String.t}, integer)
-  :: :ok | {:error, term}
+  @spec log_result(atom, reference, :ok | :error | {:error, String.t()}, integer) ::
+          :ok | {:error, term}
   defp log_result(name, ref, :ok, time) do
     log("#{inspect(ref)} #{name}: OK - Time: #{time}")
   end
@@ -80,7 +82,7 @@ defmodule HeartCheck.Executor do
     log("#{inspect(ref)} #{name}: ERROR: #{inspect(reason)} Time: #{time}")
   end
 
-  @spec log(String.t) :: :ok | {:error, term}
+  @spec log(String.t()) :: :ok | {:error, term}
   defp log(message) do
     Logger.info("[HeartCheck] #{message}")
   end

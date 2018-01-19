@@ -11,7 +11,7 @@ defmodule HeartCheck.PlugTest do
     Application.ensure_all_started(:httpoison)
     Application.ensure_all_started(:cowboy)
 
-    TestServer.start
+    TestServer.start()
   end
 
   test "it initializes the options" do
@@ -20,14 +20,11 @@ defmodule HeartCheck.PlugTest do
 
   test "it serves the content as json", %{port: port} do
     assert {"content-type", "application/json"} = get_content_type(port, "/")
-    assert {"content-type", "application/json"} =
-      get_content_type(port, "/functional")
+    assert {"content-type", "application/json"} = get_content_type(port, "/functional")
 
-    assert {"content-type", "application/json"} =
-      get_content_type(port, "/health_check")
+    assert {"content-type", "application/json"} = get_content_type(port, "/health_check")
 
-    assert {"content-type", "application/json"} =
-      get_content_type(port, "/environment")
+    assert {"content-type", "application/json"} = get_content_type(port, "/environment")
   end
 
   test "it starts the server", %{port: port} do
@@ -37,10 +34,10 @@ defmodule HeartCheck.PlugTest do
   test "it serves the regular test on /", %{port: port} do
     {:ok, body} = get_and_parse(port, "/")
 
-    assert Enum.any? body, fn
-      (%{"redis" => %{"status" => "ok"}}) -> true
-      (_) -> false
-    end
+    assert Enum.any?(body, fn
+             %{"redis" => %{"status" => "ok"}} -> true
+             _ -> false
+           end)
   end
 
   test "it serves the status: ok on /health_check", %{port: port} do
@@ -49,8 +46,8 @@ defmodule HeartCheck.PlugTest do
   end
 
   test "it gets environment info on /environment", %{port: port} do
-    with_mock Environment, [
-      info: fn() ->
+    with_mock Environment,
+      info: fn ->
         %{
           system_info: %{
             version: "Ubuntu 16.06",
@@ -62,20 +59,20 @@ defmodule HeartCheck.PlugTest do
           phoenix_version: "1.0.0",
           elixir_version: "1.4.0"
         }
-      end
-    ] do
+      end do
       assert {:ok, body} = get_and_parse(port, "/environment")
+
       assert %{
-        "system_info" => %{
-          "version" => "Ubuntu 16.06",
-          "sysname" => "unix linux",
-          "release" => "4.0.0",
-          "nodename" => "ADM0000",
-          "machine" => "x86"
-        },
-        "phoenix_version" => "1.0.0",
-        "elixir_version" => "1.4.0"
-      } == body
+               "system_info" => %{
+                 "version" => "Ubuntu 16.06",
+                 "sysname" => "unix linux",
+                 "release" => "4.0.0",
+                 "nodename" => "ADM0000",
+                 "machine" => "x86"
+               },
+               "phoenix_version" => "1.0.0",
+               "elixir_version" => "1.4.0"
+             } == body
     end
   end
 
@@ -83,14 +80,12 @@ defmodule HeartCheck.PlugTest do
     assert {:error, :not_found} = get_and_parse(port, "/api")
   end
 
-  test "it dispatches even if functional is not set in initializing",
-  %{port: port} do
+  test "it dispatches even if functional is not set in initializing", %{port: port} do
     {:ok, %HTTPoison.Response{status_code: 200}} =
       HTTPoison.get("http://localhost:#{port}/non-functional/")
   end
 
-  test "it returns 404 when funcional module is not set on /functional",
-  %{port: port} do
+  test "it returns 404 when funcional module is not set on /functional", %{port: port} do
     {:ok, %HTTPoison.Response{status_code: 404}} =
       HTTPoison.get("http://localhost:#{port}/non-functional/funcional/")
   end
@@ -98,10 +93,10 @@ defmodule HeartCheck.PlugTest do
   def get_content_type(port, path) do
     case HTTPoison.get("http://localhost:#{port}/monitoring#{path}") do
       {:ok, %HTTPoison.Response{headers: headers}} ->
-        Enum.find headers, fn
-          ({"content-type", _value}) -> true
+        Enum.find(headers, fn
+          {"content-type", _value} -> true
           _ -> false
-        end
+        end)
 
       _ ->
         {:error, :unknown}
