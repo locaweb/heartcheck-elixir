@@ -21,7 +21,7 @@ defmodule HeartCheck.Mixfile do
        extras: ["README.md", "CONTRIBUTING.md", "LICENSE.md"],
      ],
      test_coverage: [tool: ExCoveralls],
-     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test,
+     preferred_cli_env: [coveralls: :test, "coveralls.detail": :test,
        "coveralls.post": :test, "coveralls.html": :test],
      deps: deps()]
   end
