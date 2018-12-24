@@ -8,7 +8,7 @@ defmodule HeartCheck.Mixfile do
   def project do [app: :heartcheck,
      version: version(),
      description: "Web based monitoring/health checks",
-     elixir: "~> 1.2",
+     elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      elixirc_paths: elixirc_paths(Mix.env),
@@ -59,12 +59,11 @@ defmodule HeartCheck.Mixfile do
     [
       {:poison, "~> 2.0 or ~> 3.0"},
       {:plug, "~> 1.0"},
-      {:cowboy, "~> 1.0", only: [:dev, :test]},
+      {:plug_cowboy, "~> 1.0"},
       {:httpoison, "~> 0.10 or ~> 1.0", only: [:dev, :test]},
       {:ex_doc, "~> 0.11", only: :dev, runtime: false},
       {:earmark, "~> 1.0", only: :dev},
-      {:credo, "~> 0.5", only: [:dev, :test]},
-      {:dogma, "~> 0.1", only: [:dev, :test]},
+      {:credo, "~> 1.0", only: [:dev, :test]},
       {:excoveralls, "~> 0.5", only: :test},
       {:mock, "~> 0.3.0", only: :test}
     ]

@@ -11,8 +11,9 @@ defmodule HeartCheck.CachingPlug do
   require Logger
 
   alias Plug.Conn
-  alias HeartCheck.Plug
+
   alias HeartCheck.CachingPlug.Server
+  alias HeartCheck.Plug
 
   @type find_server :: {:ok, GenServer.server()} | {:error, term} | :error
 

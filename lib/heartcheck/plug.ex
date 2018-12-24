@@ -81,7 +81,7 @@ defmodule HeartCheck.Plug do
 
   import Plug.Conn
 
-  alias HeartCheck.{Executor, Formatter, Environment}
+  alias HeartCheck.{Environment, Executor, Formatter}
 
   @impl Plug
   @spec init(term) :: term

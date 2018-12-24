@@ -143,7 +143,6 @@ defmodule HeartCheck.Environment do
 
   defp deps do
     Application.loaded_applications()
-    |> Enum.map(fn {app, _, version} -> {app, to_string(version)} end)
-    |> Enum.into(%{})
+    |> Enum.into(%{}, fn {app, _, version} -> {app, to_string(version)} end)
   end
 end
