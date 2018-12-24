@@ -26,7 +26,7 @@ matrix:
       otp_release: '19.3.6'
 
     - elixir: '1.7.4'
-      otp_release: '20.0.0'
+      otp_release: '20.0'
 
     - elixir: '1.7.4'
-      otp_release: '21.0.0'
+      otp_release: '21.0'

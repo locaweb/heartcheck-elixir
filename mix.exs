@@ -8,7 +8,7 @@ defmodule HeartCheck.Mixfile do
   def project do [app: :heartcheck,
      version: version(),
      description: "Web based monitoring/health checks",
-     elixir: "~> 1.2",
+     elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      elixirc_paths: elixirc_paths(Mix.env),
