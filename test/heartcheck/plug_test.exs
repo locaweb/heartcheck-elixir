@@ -106,7 +106,7 @@ defmodule HeartCheck.PlugTest do
   def get_and_parse(port, path) do
     case HTTPoison.get("http://localhost:#{port}/monitoring#{path}") do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        Poison.decode(body)
+        Jason.decode(body)
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         {:error, :not_found}

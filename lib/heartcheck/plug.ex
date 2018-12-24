@@ -91,13 +91,13 @@ defmodule HeartCheck.Plug do
   @spec call(Plug.Conn.t(), term) :: Plug.Conn.t()
   def call(conn = %Plug.Conn{path_info: ["health_check"]}, _params) do
     %{status: :ok}
-    |> Poison.encode!()
+    |> encode!()
     |> send_as_json(conn)
   end
 
   def call(conn = %Plug.Conn{path_info: ["environment"]}, _params) do
     get_env_info()
-    |> Poison.encode!()
+    |> encode!()
     |> send_as_json(conn)
   end
 
@@ -132,12 +132,19 @@ defmodule HeartCheck.Plug do
     heartcheck
     |> Executor.execute()
     |> Enum.map(&Formatter.format/1)
-    |> Poison.encode!()
+    |> encode!()
   end
 
   @doc false
   @spec get_env_info :: Map.t()
   defp get_env_info do
     Environment.info()
+  end
+
+  @spec encode!(term()) :: String.t()
+  defp encode!(payload) do
+    encoder = Application.get_env(:heartcheck, :json_encoder, Jason)
+
+    encoder.encode!(payload)
   end
 end

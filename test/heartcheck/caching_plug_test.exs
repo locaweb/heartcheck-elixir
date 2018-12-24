@@ -17,7 +17,7 @@ defmodule Heartcheck.CachingPlugTest do
   test "it runs the heartcheck" do
     conn = CachingPlug.call(conn(:get, "/"), @opts)
 
-    assert {:ok, content} = Poison.decode(conn.resp_body)
+    assert {:ok, content} = Jason.decode(conn.resp_body)
 
     assert Enum.any?(content, fn
              %{"redis" => %{"status" => "ok"}} -> true
