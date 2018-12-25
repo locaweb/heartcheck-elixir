@@ -14,6 +14,19 @@ Add heartcheck to your list of dependencies in `mix.exs`:
   end
 ```
 
+Add `jason` to `deps` too if you do not have it already:
+
+```elixir
+  {:jason, "~> 1.0"},
+```
+
+If you wish to use `poison` or other compatible JSON library, add the dependency
+in mix.exs and to your config.exs:
+
+```elixir
+config :heartcheck, json_encoder: Poison
+```
+
 If you are using elixir < 1.5, ensure heartcheck is started before your
 application:
 
