@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.4.0] - 2018-12-25
+### Changed
+- Moved from poison to jason for handling JSON
+- Dropped official support for Elixir < 1.4
+
 ## [0.3.0] - 2018-01-08
 ### Changed
 - Ensure configuration does not get hardcoded at compile time into code
