@@ -59,7 +59,7 @@ defmodule HeartCheck.Mixfile do
     [
       {:jason, "~> 1.0", optional: true},
       {:plug, "~> 1.0"},
-      {:plug_cowboy, "~> 1.0", only: [:dev, :test]},
+      {:plug_cowboy, "~> 1.0 or ~> 2.0", only: [:dev, :test]},
       {:httpoison, "~> 0.10 or ~> 1.0", only: [:dev, :test]},
       {:ex_doc, "~> 0.11", only: :dev, runtime: false},
       {:earmark, "~> 1.0", only: :dev},
