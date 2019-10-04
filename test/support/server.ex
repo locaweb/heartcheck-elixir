@@ -4,15 +4,12 @@ defmodule TestServer do
   alias Plug.Adapters.Cowboy
 
   def start do
-    {:ok, s} = :ranch_tcp.listen(port: 0)
-    {:ok, port} = :inet.port(s)
-    :erlang.port_close(s)
-    {:ok, socket} = :ranch_tcp.listen(port: port)
-
     ref = make_ref()
-
-    cowboy_opts = [ref: ref, acceptors: 5, port: port, socket: socket]
+    cowboy_opts = [port: 0, ref: ref, transport_options: [num_acceptors: 5]]
     {:ok, cowboy_pid} = Cowboy.http(TestRouter, [], cowboy_opts)
+    Process.link(cowboy_pid)
+    port = :ranch.get_port(ref)
+
     {:ok, [pid: cowboy_pid, port: port]}
   end
 end
