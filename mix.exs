@@ -2,7 +2,7 @@ defmodule HeartCheck.Mixfile do
   use Mix.Project
 
   def version do
-    "0.4.1"
+    "0.4.2"
   end
 
   def project do [app: :heartcheck,
