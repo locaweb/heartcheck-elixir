@@ -124,6 +124,27 @@ defmodule MyApp.HeartCheck do
 end
 ```
 
+## Extra HTTP Routes
+
+#### Very basic health check
+
+Returns a simple `ok` if the app is running. It does not execute any configured
+checks:
+
+```
+/monitoring/health_check
+```
+
+
+#### General info and dependencies
+
+Returns general of the environment. OS, dependencies names and versions, elixir version etc.
+
+```
+/monitoring/environment
+```
+
+
 ## Running tests and metrics:
 
 To run the tests, simply execute:
