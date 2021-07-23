@@ -1,27 +1,34 @@
 # HeartCheck
 
-Checks your application health
-
 [![Build Status](https://travis-ci.org/locaweb/heartcheck-elixir.svg?branch=master)](https://travis-ci.org/locaweb/heartcheck-elixir)
+[![Module Version](https://img.shields.io/hexpm/v/heartcheck.svg)](https://hex.pm/packages/heartcheck)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/heartcheck/)
+[![Total Download](https://img.shields.io/hexpm/dt/heartcheck.svg)](https://hex.pm/packages/heartcheck)
+[![License](https://img.shields.io/hexpm/l/heartcheck.svg)](https://github.com/locaweb/heartcheck/blob/master/LICENSE.md)
+[![Last Updated](https://img.shields.io/github/last-commit/locaweb/heartcheck.svg)](https://github.com/locaweb/heartcheck/commits/master)
+
+Checks your application health.
 
 ## Installation
 
-Add heartcheck to your list of dependencies in `mix.exs`:
+Add `:heartcheck` to your list of dependencies in `mix.exs`:
 
 ```elixir
-  def deps do
-    [{:heartcheck, "~> 0.4"}]
-  end
+def deps do
+  [
+    {:heartcheck, "~> 0.4"}
+  ]
+end
 ```
 
-Add `jason` to `deps` too if you do not have it already:
+Add `:jason` to `deps` too if you do not have it already:
 
 ```elixir
   {:jason, "~> 1.0"},
 ```
 
-If you wish to use `poison` or other compatible JSON library, add the dependency
-in mix.exs and to your config.exs:
+If you wish to use `:poison` or other compatible JSON library, add the dependency
+in `mix.exs` and to your `config.exs`:
 
 ```elixir
 config :heartcheck, json_encoder: Poison
@@ -31,9 +38,11 @@ If you are using elixir < 1.5, ensure heartcheck is started before your
 application:
 
 ```elixir
-  def application do
-    [applications: [:heartcheck]]
-  end
+def application do
+  [
+    applications: [:heartcheck]
+  ]
+end
 ```
 
 ## Usage
@@ -131,7 +140,7 @@ end
 Returns a simple `ok` if the app is running. It does not execute any configured
 checks:
 
-```
+```console
 /monitoring/health_check
 ```
 
@@ -140,7 +149,7 @@ checks:
 
 Returns general of the environment. OS, dependencies names and versions, elixir version etc.
 
-```
+```console
 /monitoring/environment
 ```
 
@@ -149,12 +158,12 @@ Returns general of the environment. OS, dependencies names and versions, elixir 
 
 To run the tests, simply execute:
 
-```
+```console
 $ mix test
 ```
 
 To run coverage metrics and generate a html report in `cover/excoveralls.html`:
 
-```
+```console
 $ mix coveralls.html
 ```

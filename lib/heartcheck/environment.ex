@@ -1,21 +1,24 @@
 defmodule HeartCheck.Environment do
   @moduledoc """
-  Provides important information about the application's environment, including:
+  Provides important information about the application's environment.
 
-  System info from "uname" Linux command (kernel-name, nodename, kernel-release,
-  kernel-version and machine)
+  These includes:
 
-  Elixir version
+    * System info from "uname" Linux command (kernel-name, nodename,
+      kernel-release, kernel-version and machine)
 
-  Phoenix (if available) version
+    * Elixir version
 
-  Fully compatible with Linux (Unix) and Windows systems.
+    * Phoenix (if available) version
+
+    * Fully compatible with Linux (Unix) and Windows systems.
+
   """
 
   @unknown_info_word "unknown"
 
   @doc """
-  Returns a map with system information
+  Returns a map with system information.
   """
   @spec info() :: map()
   def info do

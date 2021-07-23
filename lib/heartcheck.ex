@@ -1,10 +1,8 @@
 defmodule HeartCheck do
   @moduledoc """
-
   Define your own checks using this macro:
 
   ```elixir
-
   defmodule MyHeart do
     use HeartCheck, timeout: 2000 # 3000 is default
 
@@ -22,7 +20,6 @@ defmodule HeartCheck do
     # you can use modules that implement the `HeartCheck.Check` behaviour too:
     add :module_check, MyTestModule
   end
-
   ```
 
   In the example above, `MyTestModule` can be something like:

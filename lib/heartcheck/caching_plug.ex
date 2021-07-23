@@ -1,6 +1,6 @@
 defmodule HeartCheck.CachingPlug do
   @moduledoc """
-  A plug that uses cached results of heartchecks
+  A plug that uses cached results of heartchecks.
 
   The refresh time for the checks is 300000 milliseconds (5 minutes) and it
   can be set using the `:ttl` key in the plug options.

@@ -1,6 +1,6 @@
 defmodule HeartCheck.CachingPlug.Server do
   @moduledoc """
-  GenServer that serves health check results from it's internal state
+  GenServer that serves health check results from it's internal state.
   """
 
   use GenServer
@@ -13,7 +13,10 @@ defmodule HeartCheck.CachingPlug.Server do
 
   @doc """
   Starts a server that caches the given `heartcheck` module result for the
-  given `ttl` (in milliseconds). It registers itself using the provided `name`.
+  given `ttl` (in milliseconds).
+
+  It registers itself using the provided `name`.
+
   If name is not given, a name based on the `heartcheck` will be used.
   """
   @spec start_link(atom, non_neg_integer, GenServer.name()) :: GenServer.on_start()
@@ -33,7 +36,9 @@ defmodule HeartCheck.CachingPlug.Server do
     GenServer.call(name, :fetch)
   end
 
-  @doc "Returns the last time the server has run or `nil` if that didn't happen"
+  @doc """
+  Returns the last time the server has run or `nil` if that didn't happen.
+  """
   @spec last_run(GenServer.server()) :: DateTime.t() | nil
   def last_run(name) do
     GenServer.call(name, :last_run)

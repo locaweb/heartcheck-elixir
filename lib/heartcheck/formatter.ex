@@ -1,12 +1,12 @@
 defmodule HeartCheck.Formatter do
   @moduledoc """
-  Formatter for more poison and heartcheck pattern friendly results
+  Formatter for more poison and heartcheck pattern friendly results.
   """
 
   alias HeartCheck.Executor
 
   @doc """
-  Formats results produced by `Executor.execute/1`
+  Formats results produced by `Executor.execute/1`.
   """
   @spec format(Executor.result()) :: String.t()
   def format({name, {time, :ok}}) do

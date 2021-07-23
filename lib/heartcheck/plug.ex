@@ -1,23 +1,20 @@
 defmodule HeartCheck.Plug do
   @moduledoc """
-  Plug to mount heartcheck in your plug-compatible app
+  Plug to mount heartcheck in your plug-compatible app.
 
   Add to your router:
 
   ```elixir
-
   def MyApp.Router
     use Plug.Router
     # (...)
     forward "/monitoring", to: HeartCheck.Plug, heartcheck: MyHeart
   end
-
   ```
 
   Or phoenix pipeline (note the different syntax):
 
   ```elixir
-
   def MyApp.Router
     use MyApp.Web, :router
 
@@ -31,14 +28,12 @@ defmodule HeartCheck.Plug do
       forward "/monitoring", HeartCheck.Plug, heartcheck: MyHeart
     end
   end
-
   ```
 
   In any of the cases above, if you wish to cache the HeartCheck results for a
   time, mount the `HeartCheck.CachingPlug` instead of `HeartCheck.Plug`:
 
   ```elixir
-
   def MyApp.Router
     use Plug.Router
 
@@ -48,13 +43,11 @@ defmodule HeartCheck.Plug do
 
     forward "/monitoring", to: HeartCheck.CachingPlug, heartcheck: MyHeart
   end
-
   ```
 
-  or on phoenix:
+  or on Phoenix:
 
   ```elixir
-
   def MyApp.Router
     use MyApp.Web, :router
 
@@ -70,7 +63,6 @@ defmodule HeartCheck.Plug do
       forward "/monitoring", HeartCheck.CachingPlug, heartcheck: MyHeart
     end
   end
-
   ```
 
   """
