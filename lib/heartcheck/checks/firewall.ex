@@ -1,7 +1,7 @@
 defmodule HeartCheck.Checks.Firewall do
   @moduledoc """
-  A module that provides a way to check connection
-  availability to external services
+  A module that provides a way to check connection availability to external
+  services.
   """
 
   @timeout 1000
