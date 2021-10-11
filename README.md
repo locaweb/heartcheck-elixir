@@ -156,6 +156,18 @@ Returns general of the environment. OS, dependencies names and versions, elixir 
 
 ## Running tests and metrics:
 
+To easily start a docker container with the currently supported version of Elixir, you can use this command:
+
+```console
+$ docker-compose run heartcheck bash
+```
+
+To install dependencies, execute:
+
+```console
+$ mix deps.get
+```
+
 To run the tests, simply execute:
 
 ```console

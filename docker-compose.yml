@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  heartcheck:
+    image: elixir:1.12.3
+    volumes:
+      - .:/app
+    environment:
+      MIX_HOME: /app/.mix
+    working_dir: /app
