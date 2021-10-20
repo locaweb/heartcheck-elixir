@@ -24,3 +24,6 @@ heartcheck-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Ignore the Mix home folder used by the Docker container.
+/.mix
