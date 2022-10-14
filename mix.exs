@@ -53,7 +53,7 @@ defmodule HeartCheck.Mixfile do
       {:httpoison, "~> 0.10 or ~> 1.0", only: [:dev, :test]},
       {:ex_doc, "> 0.0.0", only: :dev, runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test]},
-      {:excoveralls, "~> 0.5", only: :test},
+      {:excoveralls, "~> 0.15", only: :test},
       {:mock, "~> 0.3.0", only: :test}
     ]
   end
