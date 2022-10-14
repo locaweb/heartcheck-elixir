@@ -51,6 +51,44 @@ defmodule HeartCheck.EnvironmentTest do
       assert Environment.get_linux_prop("-v") == "Ubuntu 16.06"
       assert Environment.get_linux_prop("-m") == "x86"
     end
+
+    with_mock System,
+      get_env: fn ->
+        %{
+          "COMPUTERNAME" => "MyComputer",
+          "HOSTNAME" => "user-pc",
+          "OS" => "Windows_NT",
+          "PROCESSOR_ARCHITECTURE" => "AMD64",
+          "ARCHITECTURE" => "AMD64"
+        }
+      end do
+      assert Environment.get_windows_prop(["COMPUTERNAME", "HOSTNAME"]) == "MyComputer"
+      assert Environment.get_windows_prop(["HOSTNAME", "COMPUTERNAME"]) == "user-pc"
+      assert Environment.get_windows_prop(["OS"]) == "Windows_NT"
+      assert Environment.get_windows_prop(["PROCESSOR_ARCHITECTURE", "ARCHITECTURE"]) == "AMD64"
+    end
+  end
+
+  test "it return default unknown when it is not available" do
+    with_mock System,
+      cmd: fn "uname", args ->
+        case Enum.at(args, 0) do
+          "-n" -> nil
+          "-v" -> nil
+          "-m" -> nil
+        end
+      end do
+      assert Environment.get_linux_prop("-n") == "unknown"
+      assert Environment.get_linux_prop("-v") == "unknown"
+      assert Environment.get_linux_prop("-m") == "unknown"
+    end
+
+    with_mock System,
+      get_env: fn -> nil end do
+      assert Environment.get_windows_prop(["COMPUTERNAME", "HOSTNAME"]) == "unknown"
+      assert Environment.get_windows_prop(["OS"]) == "unknown"
+      assert Environment.get_windows_prop(["PROCESSOR_ARCHITECTURE", "ARCHITECTURE"]) == "unknown"
+    end
   end
 
   test "it correctly builds a map with system specific values" do
